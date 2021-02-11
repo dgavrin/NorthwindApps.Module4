@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using Northwind.Services.Data;
 
 namespace Northwind.Services.Products
 {
@@ -9,10 +11,24 @@ namespace Northwind.Services.Products
     /// </summary>
     public sealed class ProductManagementService : IProductManagementService
     {
+        private readonly NorthwindContext context;
+
+        public ProductManagementService(NorthwindContext context)
+        {
+            this.context = context ?? throw new ArgumentNullException(nameof(context));
+        }
+
         /// <inheritdoc/>
         public int CreateCategory(ProductCategory productCategory)
         {
-            throw new NotImplementedException();
+            if (productCategory is null)
+            {
+                return 0;
+            }
+
+            this.context.ProductCategories.Add(productCategory);
+            this.context.SaveChanges();
+            return productCategory.Id;
         }
 
         /// <inheritdoc/>
@@ -24,7 +40,17 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public bool DestroyCategory(int categoryId)
         {
-            throw new NotImplementedException();
+            var category = this.context.ProductCategories.Find(categoryId);
+            if (category is not null)
+            {
+                this.context.ProductCategories.Remove(category);
+                this.context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>
@@ -54,7 +80,7 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public IList<ProductCategory> ShowCategories(int offset, int limit)
         {
-            throw new NotImplementedException();
+            return this.context.ProductCategories.Where(c => c.Id >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
@@ -72,7 +98,8 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public bool TryShowCategory(int categoryId, out ProductCategory productCategory)
         {
-            throw new NotImplementedException();
+            productCategory = this.context.ProductCategories.Find(categoryId);
+            return productCategory is not null;
         }
 
         /// <inheritdoc/>
@@ -90,7 +117,18 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public bool UpdateCategories(int categoryId, ProductCategory productCategory)
         {
-            throw new NotImplementedException();
+            var category = this.context.ProductCategories.Single(c => c.Id == categoryId);
+            if (category is not null)
+            {
+                category.Name = productCategory.Name;
+                category.Description = productCategory.Description;
+                this.context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>
