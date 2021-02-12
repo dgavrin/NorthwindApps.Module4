@@ -43,7 +43,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategories(int offset, int limit)
+        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategories(int offset = 0, int limit = 10)
         {
             return this.Ok(this.productManagementService.ShowCategories(offset, limit));
         }

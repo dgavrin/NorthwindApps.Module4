@@ -34,7 +34,14 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public int CreateProduct(Product product)
         {
-            throw new NotImplementedException();
+            if (product is null)
+            {
+                return 0;
+            }
+
+            this.context.Products.Add(product);
+            this.context.SaveChanges();
+            return product.Id;
         }
 
         /// <inheritdoc/>
@@ -62,7 +69,17 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public bool DestroyProduct(int productId)
         {
-            throw new NotImplementedException();
+            var product = this.context.Products.Find(productId);
+            if (product is not null)
+            {
+                this.context.Products.Remove(product);
+                this.context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /// <inheritdoc/>
@@ -86,7 +103,7 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public IList<Product> ShowProducts(int offset, int limit)
         {
-            throw new NotImplementedException();
+            return this.context.Products.Where(p => p.Id >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
@@ -111,12 +128,18 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public bool TryShowProduct(int productId, out Product product)
         {
-            throw new NotImplementedException();
+            product = this.context.Products.Find(productId);
+            return product is not null;
         }
 
         /// <inheritdoc/>
         public bool UpdateCategories(int categoryId, ProductCategory productCategory)
         {
+            if (productCategory is null)
+            {
+                throw new ArgumentNullException(nameof(productCategory));
+            }
+
             var category = this.context.ProductCategories.Single(c => c.Id == categoryId);
             if (category is not null)
             {
@@ -140,7 +163,30 @@ namespace Northwind.Services.Products
         /// <inheritdoc/>
         public bool UpdateProduct(int productId, Product product)
         {
-            throw new NotImplementedException();
+            if (product is null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
+            var newProduct = this.context.Products.Single(c => c.Id == productId);
+            if (newProduct is not null)
+            {
+                newProduct.Name = product.Name;
+                newProduct.SupplierId = product.SupplierId;
+                newProduct.CategoryId = product.CategoryId;
+                newProduct.QuantityPerUnit = product.QuantityPerUnit;
+                newProduct.UnitPrice = product.UnitPrice;
+                newProduct.UnitsInStock = product.UnitsInStock;
+                newProduct.UnitsOnOrder = product.UnitsOnOrder;
+                newProduct.ReorderLevel = product.ReorderLevel;
+                newProduct.Discontinued = product.Discontinued;
+                this.context.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }
