@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Products;
 
@@ -71,6 +73,46 @@ namespace NorthwindApiApp.Controllers
             {
                 return this.NotFound();
             }
+        }
+
+        [HttpPut("{categoryId}/picture")]
+        public ActionResult PutPicture(int categoryId, IFormFile formFile)
+        {
+            if (categoryId < 1)
+            {
+                throw new ArgumentException("CategoryId can't be less than one.", nameof(categoryId));
+            }
+
+            using var stream = new MemoryStream();
+            formFile?.CopyTo(stream);
+            if (!this.productManagementService.UpdatePicture(categoryId, stream))
+            {
+                return this.NotFound();
+            }
+
+            return this.NoContent();
+        }
+
+        [HttpGet("{categoryId}/picture")]
+        public ActionResult<byte[]> GetPicture(int categoryId)
+        {
+            if (this.productManagementService.TryShowPicture(categoryId, out byte[] picture))
+            {
+                return this.Ok(picture);
+            }
+
+            return this.NotFound();
+        }
+
+        [HttpDelete("{categoryId}/picture")]
+        public ActionResult DeletePicture(int categoryId)
+        {
+            if (this.productManagementService.DestroyPicture(categoryId))
+            {
+                return this.NoContent();
+            }
+
+            return this.NotFound();
         }
     }
 }
