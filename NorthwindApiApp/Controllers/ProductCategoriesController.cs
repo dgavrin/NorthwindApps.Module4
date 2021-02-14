@@ -9,6 +9,7 @@ namespace NorthwindApiApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiConventionType(typeof(DefaultApiConventions))]
     public class ProductCategoriesController : ControllerBase
     {
         private IProductCategoryManagementService productCategoryManagementService;
