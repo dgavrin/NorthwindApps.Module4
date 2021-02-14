@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Northwind.Services.Data;
+using Northwind.Services.Products;
 
-namespace Northwind.Services.Products
+namespace Northwind.Services.EntityFrameworkCore
 {
     /// <summary>
     /// Represents a product category management service.

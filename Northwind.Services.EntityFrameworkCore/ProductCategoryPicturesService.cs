@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using Northwind.Services.Data;
+using Northwind.Services.Products;
 
-namespace Northwind.Services.Products
+namespace Northwind.Services.EntityFrameworkCore
 {
     /// <summary>
     /// Represents a product category managment service.
