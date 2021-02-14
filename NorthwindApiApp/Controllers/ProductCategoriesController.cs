@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Products;
@@ -12,29 +11,36 @@ namespace NorthwindApiApp.Controllers
     [ApiController]
     public class ProductCategoriesController : ControllerBase
     {
-        private IProductManagementService productManagementService;
+        private IProductCategoryManagementService productCategoryManagementService;
+        private IProductCategoryPicturesService productCategoryPicturesService;
 
-        public ProductCategoriesController(IProductManagementService service)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductCategoriesController"/> class.
+        /// </summary>
+        /// <param name="productCategoryManagementService">Product category management service.</param>
+        /// <param name="productCategoryPicturesService">Product category picture service.</param>
+        public ProductCategoriesController(IProductCategoryManagementService productCategoryManagementService, IProductCategoryPicturesService productCategoryPicturesService)
         {
-            this.productManagementService = service ?? throw new ArgumentNullException(nameof(service));
+            this.productCategoryManagementService = productCategoryManagementService ?? throw new ArgumentNullException(nameof(productCategoryManagementService));
+            this.productCategoryPicturesService = productCategoryPicturesService ?? throw new ArgumentNullException(nameof(productCategoryPicturesService));
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCategory>> CreateCategory(ProductCategory productCategory)
+        public ActionResult<ProductCategory> CreateCategory(ProductCategory productCategory)
         {
             if (productCategory is null)
             {
                 return this.BadRequest();
             }
 
-            this.productManagementService.CreateCategory(productCategory);
+            this.productCategoryManagementService.CreateCategory(productCategory);
             return this.Ok(productCategory);
         }
 
         [HttpGet("{categoryId}")]
-        public async Task<ActionResult<ProductCategory>> GetCategory(int categoryId)
+        public ActionResult<ProductCategory> GetCategory(int categoryId)
         {
-            if (this.productManagementService.TryShowCategory(categoryId, out ProductCategory productCategory))
+            if (this.productCategoryManagementService.TryShowCategory(categoryId, out ProductCategory productCategory))
             {
                 return this.Ok(productCategory);
             }
@@ -45,27 +51,27 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategories(int offset = 0, int limit = 10)
+        public ActionResult<IEnumerable<ProductCategory>> GetCategories(int offset = 0, int limit = 10)
         {
-            return this.Ok(this.productManagementService.ShowCategories(offset, limit));
+            return this.Ok(this.productCategoryManagementService.ShowCategories(offset, limit));
         }
 
         [HttpPut("{categoryId}")]
-        public async Task<ActionResult> UpdateCategory(int categoryId, ProductCategory productCategory)
+        public ActionResult UpdateCategory(int categoryId, ProductCategory productCategory)
         {
             if (categoryId != productCategory.Id)
             {
                 return this.BadRequest();
             }
 
-            this.productManagementService.UpdateCategories(categoryId, productCategory);
+            this.productCategoryManagementService.UpdateCategories(categoryId, productCategory);
             return this.NoContent();
         }
 
         [HttpDelete("{categoryId}")]
-        public async Task<ActionResult<ProductCategory>> DeleteCategory(int categoryId)
+        public ActionResult<ProductCategory> DeleteCategory(int categoryId)
         {
-            if (this.productManagementService.DestroyCategory(categoryId))
+            if (this.productCategoryManagementService.DestroyCategory(categoryId))
             {
                 return this.NoContent();
             }
@@ -85,7 +91,7 @@ namespace NorthwindApiApp.Controllers
 
             using var stream = new MemoryStream();
             formFile?.CopyTo(stream);
-            if (!this.productManagementService.UpdatePicture(categoryId, stream))
+            if (!this.productCategoryPicturesService.UpdatePicture(categoryId, stream))
             {
                 return this.NotFound();
             }
@@ -96,7 +102,7 @@ namespace NorthwindApiApp.Controllers
         [HttpGet("{categoryId}/picture")]
         public ActionResult<byte[]> GetPicture(int categoryId)
         {
-            if (this.productManagementService.TryShowPicture(categoryId, out byte[] picture))
+            if (this.productCategoryPicturesService.TryShowPicture(categoryId, out byte[] picture))
             {
                 return this.Ok(picture);
             }
@@ -107,7 +113,7 @@ namespace NorthwindApiApp.Controllers
         [HttpDelete("{categoryId}/picture")]
         public ActionResult DeletePicture(int categoryId)
         {
-            if (this.productManagementService.DestroyPicture(categoryId))
+            if (this.productCategoryPicturesService.DestroyPicture(categoryId))
             {
                 return this.NoContent();
             }

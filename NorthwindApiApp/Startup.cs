@@ -5,8 +5,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Northwind.Services.Products;
 using Northwind.Services.Data;
+using Northwind.Services.Products;
 
 namespace NorthwindApiApp
 {
@@ -23,6 +23,8 @@ namespace NorthwindApiApp
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IProductManagementService, ProductManagementService>();
+            services.AddTransient<IProductCategoryManagementService, ProductCategoryManagementService>();
+            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesService>();
             services.AddDbContext<NorthwindContext>(opt => opt.UseInMemoryDatabase("Northwind"));
             services.AddControllers();
             services.AddSwaggerGen(c =>

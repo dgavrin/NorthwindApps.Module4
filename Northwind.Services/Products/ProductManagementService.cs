@@ -1,43 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Northwind.Services.Data;
 
 namespace Northwind.Services.Products
 {
     /// <summary>
-    /// Represents a stub for a product management service.
+    /// Represents a product management service.
     /// </summary>
     public sealed class ProductManagementService : IProductManagementService
     {
         private readonly NorthwindContext context;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductManagementService"/> class.
+        /// </summary>
+        /// <param name="context">Northwind context.</param>
         public ProductManagementService(NorthwindContext context)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
-        }
-
-        /// <inheritdoc/>
-        public int CreateCategory(ProductCategory productCategory)
-        {
-            if (productCategory is null)
-            {
-                return -1;
-            }
-
-            if (this.context.ProductCategories.Any())
-            {
-                productCategory.Id = this.context.ProductCategories.Max(c => c.Id) + 1;
-            }
-            else
-            {
-                productCategory.Id = 0;
-            }
-
-            this.context.ProductCategories.Add(productCategory);
-            this.context.SaveChanges();
-            return productCategory.Id;
         }
 
         /// <inheritdoc/>
@@ -63,42 +44,6 @@ namespace Northwind.Services.Products
         }
 
         /// <inheritdoc/>
-        public bool DestroyCategory(int categoryId)
-        {
-            var category = this.context.ProductCategories.Find(categoryId);
-            if (category is not null)
-            {
-                this.context.ProductCategories.Remove(category);
-                this.context.SaveChanges();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public bool DestroyPicture(int categoryId)
-        {
-            if (categoryId < 1)
-            {
-                throw new ArgumentException("CategoryId can't be less than one.", nameof(categoryId));
-            }
-
-            var category = this.context.ProductCategories.Find(categoryId);
-            if (category is null)
-            {
-                return false;
-            }
-
-            category.Picture = null;
-            this.context.Update(category);
-            this.context.SaveChanges();
-            return true;
-        }
-
-        /// <inheritdoc/>
         public bool DestroyProduct(int productId)
         {
             var product = this.context.Products.Find(productId);
@@ -115,21 +60,9 @@ namespace Northwind.Services.Products
         }
 
         /// <inheritdoc/>
-        public IList<ProductCategory> LookupCategoriesByName(IList<string> names)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
         public IList<Product> LookupProductsByName(IList<string> names)
         {
             throw new NotImplementedException();
-        }
-
-        /// <inheritdoc/>
-        public IList<ProductCategory> ShowCategories(int offset, int limit)
-        {
-            return this.context.ProductCategories.Where(c => c.Id >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
@@ -145,81 +78,10 @@ namespace Northwind.Services.Products
         }
 
         /// <inheritdoc/>
-        public bool TryShowCategory(int categoryId, out ProductCategory productCategory)
-        {
-            productCategory = this.context.ProductCategories.Find(categoryId);
-            return productCategory is not null;
-        }
-
-        /// <inheritdoc/>
-        public bool TryShowPicture(int categoryId, out byte[] bytes)
-        {
-            if (categoryId < 1)
-            {
-                throw new ArgumentException("CategoryId can't be less than one.", nameof(categoryId));
-            }
-
-            var category = this.context.ProductCategories.Find(categoryId);
-            if (category is null)
-            {
-                bytes = null;
-                return false;
-            }
-
-            bytes = category.Picture;
-            return true;
-        }
-
-        /// <inheritdoc/>
         public bool TryShowProduct(int productId, out Product product)
         {
             product = this.context.Products.Find(productId);
             return product is not null;
-        }
-
-        /// <inheritdoc/>
-        public bool UpdateCategories(int categoryId, ProductCategory productCategory)
-        {
-            if (productCategory is null)
-            {
-                throw new ArgumentNullException(nameof(productCategory));
-            }
-
-            var category = this.context.ProductCategories.Single(c => c.Id == categoryId);
-            if (category is not null)
-            {
-                category.Name = productCategory.Name;
-                category.Description = productCategory.Description;
-                this.context.SaveChanges();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public bool UpdatePicture(int categoryId, Stream stream)
-        {
-            if (stream is null)
-            {
-                throw new ArgumentNullException(nameof(stream));
-            }
-
-            var category = this.context.ProductCategories.Find(categoryId);
-            if (category is null)
-            {
-                return false;
-            }
-
-            using var memoryStream = new MemoryStream();
-            stream.Seek(0, SeekOrigin.Begin);
-            stream.CopyTo(memoryStream);
-            category.Picture = memoryStream.ToArray();
-            this.context.Update(category);
-            this.context.SaveChanges();
-            return true;
         }
 
         /// <inheritdoc/>

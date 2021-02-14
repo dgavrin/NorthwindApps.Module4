@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Products;
 
@@ -19,7 +17,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Product>> CreateProduct(Product product)
+        public ActionResult<Product> CreateProduct(Product product)
         {
             if (product is null)
             {
@@ -31,7 +29,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts(int offset = 0, int limit = 10)
+        public ActionResult<IEnumerable<Product>> GetProducts(int offset = 0, int limit = 10)
         {
             if (offset >= 0 && limit > 0)
             {
@@ -44,7 +42,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet("{productId}")]
-        public async Task<ActionResult<Product>> GetProduct(int productId)
+        public ActionResult<Product> GetProduct(int productId)
         {
             if (this.productManagementService.TryShowProduct(productId, out Product product))
             {
@@ -57,7 +55,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPut("{productId}")]
-        public async Task<ActionResult> UpdateProduct(int productId, Product product)
+        public ActionResult UpdateProduct(int productId, Product product)
         {
             if (productId != product.Id)
             {
@@ -69,7 +67,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpDelete("{productId}")]
-        public async Task<ActionResult<Product>> DeleteProduct(int productId)
+        public ActionResult<Product> DeleteProduct(int productId)
         {
             if (this.productManagementService.DestroyProduct(productId))
             {
