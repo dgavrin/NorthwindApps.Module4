@@ -39,6 +39,7 @@ VALUES (@productName, @supplierId, @categoryId, @quantityPerUnit, @unitPrice, @u
             {
                 AddSqlParameters(product, command);
 
+                this.OpenSqlConnectionIfItClose();
                 var id = command.ExecuteScalar();
                 return (int)id;
             }
@@ -62,6 +63,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters.Add(productIdParameter, SqlDbType.Int);
                 command.Parameters[productIdParameter].Value = productId;
 
+                this.OpenSqlConnectionIfItClose();
                 var result = command.ExecuteScalar();
                 return ((int)result) > 0;
             }
@@ -85,6 +87,7 @@ WHERE p.ProductID = @productId";
                 command.Parameters.Add(productIdParameter, SqlDbType.Int);
                 command.Parameters[productIdParameter].Value = productId;
 
+                this.OpenSqlConnectionIfItClose();
                 using (var reader = command.ExecuteReader())
                 {
                     if (!reader.Read())
@@ -117,6 +120,7 @@ OFFSET {0} ROWS
 FETCH FIRST {1} ROWS ONLY";
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, offset, limit);
+            this.OpenSqlConnectionIfItClose();
             return this.ExecuteReader(commandText);
         }
 
@@ -138,6 +142,7 @@ FETCH FIRST {1} ROWS ONLY";
 WHERE p.ProductName in ('{0}')
 ORDER BY p.ProductID";
 
+            this.OpenSqlConnectionIfItClose();
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, string.Join("', '", productNames));
             return this.ExecuteReader(commandText);
         }
@@ -164,6 +169,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters.Add(productId, SqlDbType.Int);
                 command.Parameters[productId].Value = product.Id;
 
+                this.OpenSqlConnectionIfItClose();
                 var result = command.ExecuteScalar();
                 return ((int)result) > 0;
             }
@@ -188,6 +194,7 @@ WHERE p.CategoryID in ('{0}')";
 
             var products = new List<ProductTransferObject>();
 
+            this.OpenSqlConnectionIfItClose();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             using (var command = new SqlCommand(commandText, this.connection))
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
@@ -427,6 +434,14 @@ WHERE p.CategoryID in ('{0}')";
             }
 
             return products;
+        }
+
+        private void OpenSqlConnectionIfItClose()
+        {
+            if (this.connection is not null && this.connection.State != ConnectionState.Open)
+            {
+                this.connection.Open();
+            }
         }
     }
 }

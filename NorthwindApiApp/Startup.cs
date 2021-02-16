@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Northwind.Services.EntityFrameworkCore;
 using Northwind.Services.Products;
+using Northwind.Services.DataAccess;
 
 namespace NorthwindApiApp
 {
@@ -25,13 +26,12 @@ namespace NorthwindApiApp
         {
             services.AddScoped((service) =>
             {
-                var sqlConnection = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Northwind;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
-                sqlConnection.Open();
+                var sqlConnection = new SqlConnection(@"data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Northwind;Integrated Security=True;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False");
                 return sqlConnection;
             });
 
             services.AddTransient<Northwind.DataAccess.NorthwindDataAccessFactory, Northwind.DataAccess.SqlServerDataAccessFactory>();
-            services.AddTransient<IProductManagementService, ProductManagementService>();
+            services.AddTransient<IProductManagementService, ProductManagementDataAccessService>();
             services.AddTransient<IProductCategoryManagementService, ProductCategoryManagementService>();
             services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesService>();
             services.AddDbContext<NorthwindContext>(opt => opt.UseInMemoryDatabase("Northwind"));

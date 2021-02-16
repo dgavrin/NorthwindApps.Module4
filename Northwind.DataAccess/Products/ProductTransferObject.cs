@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 
 namespace Northwind.DataAccess.Products
 {
@@ -57,5 +58,53 @@ namespace Northwind.DataAccess.Products
         /// Gets or sets a value indicating whether a product is discontinued.
         /// </summary>
         public bool Discontinued { get; set; }
+
+        public static explicit operator ProductTransferObject(Services.Products.Product product)
+        {
+            if (product is null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
+            ProductTransferObject productTransferObject = new ProductTransferObject()
+            {
+                Id = product.Id,
+                Name = product.Name,
+                SupplierId = product.SupplierId,
+                CategoryId = product.CategoryId,
+                QuantityPerUnit = product.QuantityPerUnit,
+                UnitPrice = product.UnitPrice,
+                UnitsInStock = product.UnitsInStock,
+                UnitsOnOrder = product.UnitsOnOrder,
+                ReorderLevel = product.ReorderLevel,
+                Discontinued = product.Discontinued,
+            };
+
+            return productTransferObject;
+        }
+
+        public static explicit operator Services.Products.Product(ProductTransferObject productTransferObject)
+        {
+            if (productTransferObject is null)
+            {
+                throw new ArgumentNullException(nameof(productTransferObject));
+            }
+
+            Services.Products.Product product = new Services.Products.Product()
+            {
+                Id = productTransferObject.Id,
+                Name = productTransferObject.Name,
+                SupplierId = productTransferObject.SupplierId,
+                CategoryId = productTransferObject.CategoryId,
+                QuantityPerUnit = productTransferObject.QuantityPerUnit,
+                UnitPrice = productTransferObject.UnitPrice,
+                UnitsInStock = productTransferObject.UnitsInStock,
+                UnitsOnOrder = productTransferObject.UnitsOnOrder,
+                ReorderLevel = productTransferObject.ReorderLevel,
+                Discontinued = productTransferObject.Discontinued,
+            };
+
+            return product;
+        }
     }
 }
