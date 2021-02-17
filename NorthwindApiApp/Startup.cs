@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Data.SqlClient;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Northwind.DataAccess.SqlServer;
 using Northwind.Services.EntityFrameworkCore;
 using Northwind.Services.Products;
 
@@ -22,9 +24,16 @@ namespace NorthwindApiApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IProductManagementService, ProductManagementService>();
-            services.AddTransient<IProductCategoryManagementService, ProductCategoryManagementService>();
-            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesService>();
+            services.AddScoped((service) =>
+            {
+                var sqlConnection = new SqlConnection(this.Configuration.GetConnectionString("NorthwindConnection"));
+                return sqlConnection;
+            });
+
+            services.AddTransient<NorthwindDataAccessFactory, SqlServerDataAccessFactory>();
+            services.AddTransient<IProductManagementService, ProductManagementDataAccessService>();
+            services.AddTransient<IProductCategoryManagementService, ProductCategoriesManagementDataAccessService>();
+            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesManagementDataAccessService>();
             services.AddDbContext<NorthwindContext>(opt => opt.UseInMemoryDatabase("Northwind"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
