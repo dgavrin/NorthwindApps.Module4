@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using Northwind.Services.Products;
 
 namespace Northwind.DataAccess.Products
 {
@@ -29,5 +31,41 @@ namespace Northwind.DataAccess.Products
 #pragma warning disable CA1819 // Properties should not return arrays
         public byte[] Picture { get; set; }
 #pragma warning restore CA1819 // Properties should not return arrays
+
+        public static explicit operator ProductCategoryTransferObject(ProductCategory productCategory)
+        {
+            if (productCategory is null)
+            {
+                throw new ArgumentNullException(nameof(productCategory));
+            }
+
+            ProductCategoryTransferObject productCategoryTransferObject = new ProductCategoryTransferObject()
+            {
+                Id = productCategory.Id,
+                Name = productCategory.Name,
+                Description = productCategory.Description,
+                Picture = productCategory.Picture,
+            };
+
+            return productCategoryTransferObject;
+        }
+
+        public static explicit operator ProductCategory(ProductCategoryTransferObject productCategoryTransferObject)
+        {
+            if (productCategoryTransferObject is null)
+            {
+                throw new ArgumentNullException(nameof(productCategoryTransferObject));
+            }
+
+            ProductCategory productCategory = new ProductCategory()
+            {
+                Id = productCategoryTransferObject.Id,
+                Name = productCategoryTransferObject.Name,
+                Description = productCategoryTransferObject.Description,
+                Picture = productCategoryTransferObject.Picture,
+            };
+
+            return productCategory;
+        }
     }
 }

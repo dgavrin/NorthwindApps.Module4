@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
 using Northwind.DataAccess;
 using Northwind.DataAccess.Products;
 using Northwind.Services.Products;

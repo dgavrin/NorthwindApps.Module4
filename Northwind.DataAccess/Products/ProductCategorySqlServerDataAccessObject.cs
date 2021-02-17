@@ -38,6 +38,7 @@ VALUES (@categoryName, @description, @picture)";
             {
                 AddSqlParameters(productCategory, command);
 
+                this.OpenSqlConnectionIfItClose();
                 var id = command.ExecuteScalar();
                 return (int)id;
             }
@@ -61,6 +62,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters.Add(categoryId, SqlDbType.Int);
                 command.Parameters[categoryId].Value = productCategoryId;
 
+                this.OpenSqlConnectionIfItClose();
                 var result = command.ExecuteScalar();
                 return ((int)result) > 0;
             }
@@ -84,6 +86,7 @@ WHERE c.CategoryID = @categoryId";
                 command.Parameters.Add(categoryId, SqlDbType.Int);
                 command.Parameters[categoryId].Value = productCategoryId;
 
+                this.OpenSqlConnectionIfItClose();
                 using (var reader = command.ExecuteReader())
                 {
                     if (!reader.Read())
@@ -116,6 +119,7 @@ OFFSET {0} ROWS
 FETCH FIRST {1} ROWS ONLY";
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, offset, limit);
+            this.OpenSqlConnectionIfItClose();
             return this.ExecuteReader(commandText);
         }
 
@@ -138,6 +142,7 @@ WHERE c.CategoryName in ('{0}')
 ORDER BY c.CategoryID";
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, string.Join("', '", productCategoryNames));
+            this.OpenSqlConnectionIfItClose();
             return this.ExecuteReader(commandText);
         }
 
@@ -162,6 +167,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters.Add(categoryId, SqlDbType.Int);
                 command.Parameters[categoryId].Value = productCategory.Id;
 
+                this.OpenSqlConnectionIfItClose();
                 var result = command.ExecuteScalar();
                 return ((int)result) > 0;
             }
@@ -246,6 +252,14 @@ SELECT @@ROWCOUNT";
             }
 
             return productCategories;
+        }
+
+        private void OpenSqlConnectionIfItClose()
+        {
+            if (this.connection is not null && this.connection.State != ConnectionState.Open)
+            {
+                this.connection.Open();
+            }
         }
     }
 }

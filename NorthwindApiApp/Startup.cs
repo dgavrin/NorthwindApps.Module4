@@ -32,8 +32,8 @@ namespace NorthwindApiApp
 
             services.AddTransient<Northwind.DataAccess.NorthwindDataAccessFactory, Northwind.DataAccess.SqlServerDataAccessFactory>();
             services.AddTransient<IProductManagementService, ProductManagementDataAccessService>();
-            services.AddTransient<IProductCategoryManagementService, ProductCategoryManagementService>();
-            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesService>();
+            services.AddTransient<IProductCategoryManagementService, ProductCategoriesManagementDataAccessService>();
+            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesManagementDataAccessService>();
             services.AddDbContext<NorthwindContext>(opt => opt.UseInMemoryDatabase("Northwind"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
