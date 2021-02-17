@@ -1,7 +1,7 @@
 ﻿using Northwind.DataAccess.Employees;
 using Northwind.DataAccess.Products;
 
-namespace Northwind.DataAccess
+namespace Northwind.DataAccess.SqlServer
 {
     /// <summary>
     /// Represents an abstract factory for creating Northwind DAO.

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using Northwind.DataAccess;
 using Northwind.DataAccess.Products;
 using Northwind.Services.Products;
 
-namespace Northwind.Services.DataAccess
+namespace Northwind.DataAccess.SqlServer
 {
     public class ProductCategoriesManagementDataAccessService : IProductCategoryManagementService
     {
