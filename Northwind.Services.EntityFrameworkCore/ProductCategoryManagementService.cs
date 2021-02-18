@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -22,7 +23,7 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public int CreateCategory(ProductCategory productCategory)
+        public async Task<int> CreateCategoryAsync(ProductCategory productCategory)
         {
             if (productCategory is null)
             {
@@ -39,18 +40,18 @@ namespace Northwind.Services.EntityFrameworkCore
             }
 
             this.context.ProductCategories.Add(productCategory);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
             return productCategory.Id;
         }
 
         /// <inheritdoc/>
-        public bool DestroyCategory(int categoryId)
+        public async Task<bool> DestroyCategoryAsync(int categoryId)
         {
-            var category = this.context.ProductCategories.Find(categoryId);
+            var category = await this.context.ProductCategories.FindAsync(categoryId);
             if (category is not null)
             {
                 this.context.ProductCategories.Remove(category);
-                this.context.SaveChanges();
+                await this.context.SaveChangesAsync();
                 return true;
             }
             else
@@ -60,26 +61,26 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public IList<ProductCategory> LookupCategoriesByName(IList<string> names)
+        public async Task<IList<ProductCategory>> LookupCategoriesByNameAsync(IList<string> names)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public IList<ProductCategory> ShowCategories(int offset, int limit)
+        public async Task<IList<ProductCategory>> ShowCategoriesAsync(int offset, int limit)
         {
             return this.context.ProductCategories.Where(c => c.Id >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
-        public bool TryShowCategory(int categoryId, out ProductCategory productCategory)
+        public bool TryShowCategoryAsync(int categoryId, out ProductCategory productCategory)
         {
             productCategory = this.context.ProductCategories.Find(categoryId);
             return productCategory is not null;
         }
 
         /// <inheritdoc/>
-        public bool UpdateCategories(int categoryId, ProductCategory productCategory)
+        public async Task<bool> UpdateCategoriesAsync(int categoryId, ProductCategory productCategory)
         {
             if (productCategory is null)
             {
@@ -91,7 +92,7 @@ namespace Northwind.Services.EntityFrameworkCore
             {
                 category.Name = productCategory.Name;
                 category.Description = productCategory.Description;
-                this.context.SaveChanges();
+                await this.context.SaveChangesAsync();
                 return true;
             }
             else

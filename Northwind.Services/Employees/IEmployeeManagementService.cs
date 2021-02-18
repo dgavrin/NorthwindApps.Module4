@@ -1,17 +1,18 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Northwind.Services.Employees
 {
     public interface IEmployeeManagementService
     {
-        IList<Employee> ShowEmployees(int offset, int limit);
+        Task<IList<Employee>> ShowEmployeesAsync(int offset, int limit);
 
         bool TryShowEmployee(int employeeId, out Employee employee);
 
-        int CreateEmployee(Employee employee);
+        Task<int> CreateEmployeeAsync(Employee employee);
 
-        bool DestroyEmployee(int employeeId);
+        Task<bool> DestroyEmployeeAsync(int employeeId);
 
-        bool UpdateEmployee(int employeeId, Employee employee);
+        Task<bool> UpdateEmployeeAsync(int employeeId, Employee employee);
     }
 }

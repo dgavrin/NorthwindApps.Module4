@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using Northwind.DataAccess.Employees;
 using Northwind.Services.Employees;
 
@@ -20,32 +21,32 @@ namespace Northwind.DataAccess.SqlServer.Employees
         }
 
         /// <inheritdoc/>
-        public int CreateEmployee(Employee employee)
+        public async Task<int> CreateEmployeeAsync(Employee employee)
         {
             if (employee is null)
             {
                 throw new ArgumentNullException(nameof(employee));
             }
 
-            return this.northwindDataAccessFactory.GetEmployeeDataAccessObject().InsertEmployee((EmployeeTransferObject)employee);
+            return await this.northwindDataAccessFactory.GetEmployeeDataAccessObject().InsertEmployeeAsync((EmployeeTransferObject)employee);
         }
 
         /// <inheritdoc/>
-        public bool DestroyEmployee(int employeeId)
+        public async Task<bool> DestroyEmployeeAsync(int employeeId)
         {
             if (employeeId < 1)
             {
                 throw new ArgumentException("EmployeeId can't be less than one.", nameof(employeeId));
             }
 
-            return this.northwindDataAccessFactory.GetEmployeeDataAccessObject().DeleteEmployee(employeeId);
+            return await this.northwindDataAccessFactory.GetEmployeeDataAccessObject().DeleteEmployeeAsync(employeeId);
         }
 
         /// <inheritdoc/>
-        public IList<Employee> ShowEmployees(int offset, int limit)
+        public async Task<IList<Employee>> ShowEmployeesAsync(int offset, int limit)
         {
             var employees = new List<Employee>();
-            foreach (var employee in this.northwindDataAccessFactory.GetEmployeeDataAccessObject().SelectEmployees(offset, limit))
+            foreach (var employee in await this.northwindDataAccessFactory.GetEmployeeDataAccessObject().SelectEmployeesAsync(offset, limit))
             {
                 employees.Add((Employee)employee);
             }
@@ -75,7 +76,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
         }
 
         /// <inheritdoc/>
-        public bool UpdateEmployee(int employeeId, Employee employee)
+        public async Task<bool> UpdateEmployeeAsync(int employeeId, Employee employee)
         {
             if (employee is null)
             {
@@ -87,7 +88,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
                 return false;
             }
 
-            if (this.northwindDataAccessFactory.GetEmployeeDataAccessObject().UpdateEmployee((EmployeeTransferObject)employee))
+            if (await this.northwindDataAccessFactory.GetEmployeeDataAccessObject().UpdateEmployeeAsync((EmployeeTransferObject)employee))
             {
                 return true;
             }

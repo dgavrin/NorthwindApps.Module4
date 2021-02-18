@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Employees;
 
@@ -18,23 +19,23 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Employee> CreateEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> CreateEmployeeAsync(Employee employee)
         {
             if (employee is null)
             {
                 throw new ArgumentNullException(nameof(employee));
             }
 
-            this.employeeManagementService.CreateEmployee(employee);
+            await this.employeeManagementService.CreateEmployeeAsync(employee);
             return this.Ok(employee);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Employee>> GetEmployees(int offset = 0, int limit = 10)
+        public async Task<ActionResult<IEnumerable<Employee>>> GetEmployeesAsync(int offset = 0, int limit = 10)
         {
             if (offset >= 0 && limit > 0)
             {
-                return this.Ok(this.employeeManagementService.ShowEmployees(offset, limit));
+                return this.Ok(await this.employeeManagementService.ShowEmployeesAsync(offset, limit));
             }
             else
             {
@@ -56,21 +57,21 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPut("{employeeId}")]
-        public ActionResult UpdateEmployee(int employeeId, Employee employee)
+        public async Task<ActionResult> UpdateEmployeeAsync(int employeeId, Employee employee)
         {
             if (employeeId != employee.Id)
             {
                 return this.BadRequest();
             }
 
-            this.employeeManagementService.UpdateEmployee(employeeId, employee);
+            await this.employeeManagementService.UpdateEmployeeAsync(employeeId, employee);
             return this.NoContent();
         }
 
         [HttpDelete("{employeeId}")]
-        public ActionResult<Employee> DeleteEmployee(int employeeId)
+        public async Task<ActionResult<Employee>> DeleteEmployeeAsync(int employeeId)
         {
-            if (this.employeeManagementService.DestroyEmployee(employeeId))
+            if (await this.employeeManagementService.DestroyEmployeeAsync(employeeId))
             {
                 return this.NoContent();
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Threading.Tasks;
 using Northwind.DataAccess.Products;
 
 namespace Northwind.DataAccess.SqlServer.Products
@@ -24,7 +25,7 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public int InsertProductCategory(ProductCategoryTransferObject productCategory)
+        public async Task<int> InsertProductCategoryAsync(ProductCategoryTransferObject productCategory)
         {
             if (productCategory == null)
             {
@@ -40,13 +41,13 @@ VALUES (@categoryName, @description, @picture)";
                 AddSqlParameters(productCategory, command);
 
                 this.OpenSqlConnectionIfItClose();
-                var id = command.ExecuteScalar();
+                var id = await command.ExecuteScalarAsync();
                 return (int)id;
             }
         }
 
         /// <inheritdoc/>
-        public bool DeleteProductCategory(int productCategoryId)
+        public async Task<bool> DeleteProductCategoryAsync(int productCategoryId)
         {
             if (productCategoryId <= 0)
             {
@@ -64,7 +65,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters[categoryId].Value = productCategoryId;
 
                 this.OpenSqlConnectionIfItClose();
-                var result = command.ExecuteScalar();
+                var result = await command.ExecuteScalarAsync();
                 return ((int)result) > 0;
             }
         }
@@ -101,7 +102,7 @@ WHERE c.CategoryID = @categoryId";
         }
 
         /// <inheritdoc/>
-        public IList<ProductCategoryTransferObject> SelectProductCategories(int offset, int limit)
+        public async Task<IList<ProductCategoryTransferObject>> SelectProductCategoriesAsync(int offset, int limit)
         {
             if (offset < 0)
             {
@@ -121,11 +122,11 @@ FETCH FIRST {1} ROWS ONLY";
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, offset, limit);
             this.OpenSqlConnectionIfItClose();
-            return this.ExecuteReader(commandText);
+            return await this.ExecuteReaderAsync(commandText);
         }
 
         /// <inheritdoc/>
-        public IList<ProductCategoryTransferObject> SelectProductCategoriesByName(ICollection<string> productCategoryNames)
+        public async Task<IList<ProductCategoryTransferObject>> SelectProductCategoriesByNameAsync(ICollection<string> productCategoryNames)
         {
             if (productCategoryNames == null)
             {
@@ -144,11 +145,11 @@ ORDER BY c.CategoryID";
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, string.Join("', '", productCategoryNames));
             this.OpenSqlConnectionIfItClose();
-            return this.ExecuteReader(commandText);
+            return await this.ExecuteReaderAsync(commandText);
         }
 
         /// <inheritdoc/>
-        public bool UpdateProductCategory(ProductCategoryTransferObject productCategory)
+        public async Task<bool> UpdateProductCategoryAsync(ProductCategoryTransferObject productCategory)
         {
             if (productCategory == null)
             {
@@ -169,7 +170,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters[categoryId].Value = productCategory.Id;
 
                 this.OpenSqlConnectionIfItClose();
-                var result = command.ExecuteScalar();
+                var result = await command.ExecuteScalarAsync();
                 return ((int)result) > 0;
             }
         }
@@ -237,14 +238,14 @@ SELECT @@ROWCOUNT";
             }
         }
 
-        private IList<ProductCategoryTransferObject> ExecuteReader(string commandText)
+        private async Task<IList<ProductCategoryTransferObject>> ExecuteReaderAsync(string commandText)
         {
             var productCategories = new List<ProductCategoryTransferObject>();
 
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             using (var command = new SqlCommand(commandText, this.connection))
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-            using (var reader = command.ExecuteReader())
+            using (var reader = await command.ExecuteReaderAsync())
             {
                 while (reader.Read())
                 {

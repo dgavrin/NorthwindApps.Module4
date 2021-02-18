@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Northwind.Services.Employees;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -19,7 +20,7 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public int CreateEmployee(Employee employee)
+        public async Task<int> CreateEmployeeAsync(Employee employee)
         {
             if (employee is null)
             {
@@ -36,18 +37,18 @@ namespace Northwind.Services.EntityFrameworkCore
             }
 
             this.context.Employees.Add(employee);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
             return employee.Id;
         }
 
         /// <inheritdoc/>
-        public bool DestroyEmployee(int employeeId)
+        public async Task<bool> DestroyEmployeeAsync(int employeeId)
         {
-            var employee = this.context.Employees.Find(employeeId);
+            var employee = await this.context.Employees.FindAsync(employeeId);
             if (employee is not null)
             {
                 this.context.Employees.Remove(employee);
-                this.context.SaveChanges();
+                await this.context.SaveChangesAsync();
                 return true;
             }
             else
@@ -57,7 +58,7 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public IList<Employee> ShowEmployees(int offset, int limit)
+        public async Task<IList<Employee>> ShowEmployeesAsync(int offset, int limit)
         {
             return this.context.Employees.Where(e => e.Id >= offset).Take(limit).ToList();
         }
@@ -70,7 +71,7 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public bool UpdateEmployee(int employeeId, Employee employee)
+        public async Task<bool> UpdateEmployeeAsync(int employeeId, Employee employee)
         {
             if (employee is null)
             {

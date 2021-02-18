@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Threading.Tasks;
 using Northwind.DataAccess.Products;
 using Northwind.Services.Products;
 
@@ -20,7 +21,7 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public bool DestroyPicture(int categoryId)
+        public async Task<bool> DestroyPictureAsync(int categoryId)
         {
             if (categoryId < 1)
             {
@@ -38,7 +39,7 @@ namespace Northwind.DataAccess.SqlServer.Products
             }
 
             productCategoryTransferObject.Picture = null;
-            if (this.northwindDataAccessFactory.GetProductCategoryDataAccessObject().UpdateProductCategory(productCategoryTransferObject))
+            if (await this.northwindDataAccessFactory.GetProductCategoryDataAccessObject().UpdateProductCategoryAsync(productCategoryTransferObject))
             {
                 return true;
             }
@@ -72,7 +73,7 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public bool UpdatePicture(int categoryId, Stream stream)
+        public async Task<bool> UpdatePictureAsync(int categoryId, Stream stream)
         {
             if (stream is null)
             {
@@ -97,10 +98,10 @@ namespace Northwind.DataAccess.SqlServer.Products
 
             using var memoryStream = new MemoryStream();
             stream.Seek(0, SeekOrigin.Begin);
-            stream.CopyTo(memoryStream);
+            await stream.CopyToAsync(memoryStream);
             productCategoryTransferObject.Picture = memoryStream.ToArray();
 
-            if (this.northwindDataAccessFactory.GetProductCategoryDataAccessObject().UpdateProductCategory(productCategoryTransferObject))
+            if (await this.northwindDataAccessFactory.GetProductCategoryDataAccessObject().UpdateProductCategoryAsync(productCategoryTransferObject))
             {
                 return true;
             }

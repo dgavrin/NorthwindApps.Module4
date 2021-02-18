@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Threading.Tasks;
 using Northwind.DataAccess.Products;
 using Northwind.Services.Products;
 
@@ -20,38 +21,38 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public int CreateProduct(Product product)
+        public async Task<int> CreateProductAsync(Product product)
         {
             if (product is null)
             {
                 throw new ArgumentNullException(nameof(product));
             }
 
-            return this.northwindDataAccessFactory.GetProductDataAccessObject().InsertProduct((ProductTransferObject)product);
+            return await this.northwindDataAccessFactory.GetProductDataAccessObject().InsertProductAsync((ProductTransferObject)product);
         }
 
         /// <inheritdoc/>
-        public bool DestroyProduct(int productId)
+        public async Task<bool> DestroyProductAsync(int productId)
         {
             if (productId < 1)
             {
                 throw new ArgumentException("ProductId can't be less than one.", nameof(productId));
             }
 
-            return this.northwindDataAccessFactory.GetProductDataAccessObject().DeleteProduct(productId);
+            return await this.northwindDataAccessFactory.GetProductDataAccessObject().DeleteProductAsync(productId);
         }
 
         /// <inheritdoc/>
-        public IList<Product> LookupProductsByName(IList<string> names)
+        public async Task<IList<Product>> LookupProductsByNameAsync(IList<string> names)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public IList<Product> ShowProducts(int offset, int limit)
+        public async Task<IList<Product>> ShowProductsAsync(int offset, int limit)
         {
             var products = new List<Product>();
-            foreach (var productTransferObkect in this.northwindDataAccessFactory.GetProductDataAccessObject().SelectProducts(offset, limit))
+            foreach (var productTransferObkect in await this.northwindDataAccessFactory.GetProductDataAccessObject().SelectProductsAsync(offset, limit))
             {
                 products.Add((Product)productTransferObkect);
             }
@@ -60,7 +61,7 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public IList<Product> ShowProductsForCategory(int categoryId)
+        public async Task<IList<Product>> ShowProductsForCategoryAsync(int categoryId)
         {
             throw new NotImplementedException();
         }
@@ -87,7 +88,7 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public bool UpdateProduct(int productId, Product product)
+        public async Task<bool> UpdateProductAsync(int productId, Product product)
         {
             if (product is null)
             {
@@ -99,7 +100,7 @@ namespace Northwind.DataAccess.SqlServer.Products
                 return false;
             }
 
-            if (this.northwindDataAccessFactory.GetProductDataAccessObject().UpdateProduct((ProductTransferObject)product))
+            if (await this.northwindDataAccessFactory.GetProductDataAccessObject().UpdateProductAsync((ProductTransferObject)product))
             {
                 return true;
             }

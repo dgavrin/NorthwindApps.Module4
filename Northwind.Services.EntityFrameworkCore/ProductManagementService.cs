@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -22,7 +23,7 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public int CreateProduct(Product product)
+        public async Task<int> CreateProductAsync(Product product)
         {
             if (product is null)
             {
@@ -39,18 +40,18 @@ namespace Northwind.Services.EntityFrameworkCore
             }
 
             this.context.Products.Add(product);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
             return product.Id;
         }
 
         /// <inheritdoc/>
-        public bool DestroyProduct(int productId)
+        public async Task<bool> DestroyProductAsync(int productId)
         {
             var product = this.context.Products.Find(productId);
             if (product is not null)
             {
                 this.context.Products.Remove(product);
-                this.context.SaveChanges();
+                await this.context.SaveChangesAsync();
                 return true;
             }
             else
@@ -60,19 +61,19 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public IList<Product> LookupProductsByName(IList<string> names)
+        public async Task<IList<Product>> LookupProductsByNameAsync(IList<string> names)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public IList<Product> ShowProducts(int offset, int limit)
+        public async Task<IList<Product>> ShowProductsAsync(int offset, int limit)
         {
             return this.context.Products.Where(p => p.Id >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
-        public IList<Product> ShowProductsForCategory(int categoryId)
+        public async Task<IList<Product>> ShowProductsForCategoryAsync(int categoryId)
         {
             throw new NotImplementedException();
         }
@@ -85,7 +86,7 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public bool UpdateProduct(int productId, Product product)
+        public async Task<bool> UpdateProductAsync(int productId, Product product)
         {
             if (product is null)
             {
@@ -104,7 +105,7 @@ namespace Northwind.Services.EntityFrameworkCore
                 newProduct.UnitsOnOrder = product.UnitsOnOrder;
                 newProduct.ReorderLevel = product.ReorderLevel;
                 newProduct.Discontinued = product.Discontinued;
-                this.context.SaveChanges();
+                await this.context.SaveChangesAsync();
                 return true;
             }
             else

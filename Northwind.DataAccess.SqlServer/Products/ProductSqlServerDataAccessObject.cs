@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using Northwind.DataAccess.Products;
 
 namespace Northwind.DataAccess.SqlServer.Products
@@ -25,7 +26,7 @@ namespace Northwind.DataAccess.SqlServer.Products
         }
 
         /// <inheritdoc/>
-        public int InsertProduct(ProductTransferObject product)
+        public async Task<int> InsertProductAsync(ProductTransferObject product)
         {
             if (product == null)
             {
@@ -41,13 +42,13 @@ VALUES (@productName, @supplierId, @categoryId, @quantityPerUnit, @unitPrice, @u
                 AddSqlParameters(product, command);
 
                 this.OpenSqlConnectionIfItClose();
-                var id = command.ExecuteScalar();
+                var id = await command.ExecuteScalarAsync();
                 return (int)id;
             }
         }
 
         /// <inheritdoc/>
-        public bool DeleteProduct(int productId)
+        public async Task<bool> DeleteProductAsync(int productId)
         {
             if (productId <= 0)
             {
@@ -65,7 +66,7 @@ SELECT @@ROWCOUNT";
                 command.Parameters[productIdParameter].Value = productId;
 
                 this.OpenSqlConnectionIfItClose();
-                var result = command.ExecuteScalar();
+                var result = await command.ExecuteScalarAsync();
                 return ((int)result) > 0;
             }
         }
@@ -102,7 +103,7 @@ WHERE p.ProductID = @productId";
         }
 
         /// <inheritdoc />
-        public IList<ProductTransferObject> SelectProducts(int offset, int limit)
+        public async Task<IList<ProductTransferObject>> SelectProductsAsync(int offset, int limit)
         {
             if (offset < 0)
             {
@@ -122,11 +123,11 @@ FETCH FIRST {1} ROWS ONLY";
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, offset, limit);
             this.OpenSqlConnectionIfItClose();
-            return this.ExecuteReader(commandText);
+            return await this.ExecuteReaderAsync(commandText);
         }
 
         /// <inheritdoc/>
-        public IList<ProductTransferObject> SelectProductsByName(ICollection<string> productNames)
+        public async Task<IList<ProductTransferObject>> SelectProductsByNameAsync(ICollection<string> productNames)
         {
             if (productNames == null)
             {
@@ -145,11 +146,11 @@ ORDER BY p.ProductID";
 
             this.OpenSqlConnectionIfItClose();
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, string.Join("', '", productNames));
-            return this.ExecuteReader(commandText);
+            return await this.ExecuteReaderAsync(commandText);
         }
 
         /// <inheritdoc/>
-        public bool UpdateProduct(ProductTransferObject product)
+        public async Task<bool> UpdateProductAsync(ProductTransferObject product)
         {
             if (product == null)
             {
@@ -171,13 +172,13 @@ SELECT @@ROWCOUNT";
                 command.Parameters[productId].Value = product.Id;
 
                 this.OpenSqlConnectionIfItClose();
-                var result = command.ExecuteScalar();
+                var result = await command.ExecuteScalarAsync();
                 return ((int)result) > 0;
             }
         }
 
         /// <inheritdoc/>
-        public IList<ProductTransferObject> SelectProductByCategory(ICollection<int> collectionOfCategoryId)
+        public async Task<IList<ProductTransferObject>> SelectProductByCategoryAsync(ICollection<int> collectionOfCategoryId)
         {
             if (collectionOfCategoryId == null)
             {
@@ -199,7 +200,7 @@ WHERE p.CategoryID in ('{0}')";
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             using (var command = new SqlCommand(commandText, this.connection))
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-            using (var reader = command.ExecuteReader())
+            using (var reader = await command.ExecuteReaderAsync())
             {
                 while (reader.Read())
                 {
@@ -419,14 +420,14 @@ WHERE p.CategoryID in ('{0}')";
             command.Parameters[discontinuedParameter].Value = product.Discontinued;
         }
 
-        private IList<ProductTransferObject> ExecuteReader(string commandText)
+        private async Task<IList<ProductTransferObject>> ExecuteReaderAsync(string commandText)
         {
             var products = new List<ProductTransferObject>();
 
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             using (var command = new SqlCommand(commandText, this.connection))
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-            using (var reader = command.ExecuteReader())
+            using (var reader = await command.ExecuteReaderAsync())
             {
                 while (reader.Read())
                 {

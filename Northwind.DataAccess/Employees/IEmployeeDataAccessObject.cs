@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Northwind.DataAccess.Employees
 {
@@ -9,14 +10,14 @@ namespace Northwind.DataAccess.Employees
     public interface IEmployeeDataAccessObject
 #pragma warning restore CA1040
     {
-        int InsertEmployee(EmployeeTransferObject employee);
+        Task<int> InsertEmployeeAsync(EmployeeTransferObject employee);
 
-        bool DeleteEmployee(int employeeId);
+        Task<bool> DeleteEmployeeAsync(int employeeId);
 
-        bool UpdateEmployee(EmployeeTransferObject employee);
+        Task<bool> UpdateEmployeeAsync(EmployeeTransferObject employee);
 
         EmployeeTransferObject FindEmployee(int employeeId);
 
-        IList<EmployeeTransferObject> SelectEmployees(int offset, int limit);
+        Task<IList<EmployeeTransferObject>> SelectEmployeesAsync(int offset, int limit);
     }
 }

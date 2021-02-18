@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Northwind.DataAccess.Products
 {
@@ -12,21 +13,21 @@ namespace Northwind.DataAccess.Products
         /// </summary>
         /// <param name="productCategory">A <see cref="ProductCategoryTransferObject"/>.</param>
         /// <returns>A data storage identifier of a new product category.</returns>
-        int InsertProductCategory(ProductCategoryTransferObject productCategory);
+        Task<int> InsertProductCategoryAsync(ProductCategoryTransferObject productCategory);
 
         /// <summary>
         /// Deletes a Northwind product category from a data storage.
         /// </summary>
         /// <param name="productCategoryId">An product category identifier.</param>
         /// <returns>True if a product category is deleted; otherwise false.</returns>
-        bool DeleteProductCategory(int productCategoryId);
+        Task<bool> DeleteProductCategoryAsync(int productCategoryId);
 
         /// <summary>
         /// Updates a Northwind product category in a data storage.
         /// </summary>
         /// <param name="productCategory">A <see cref="ProductCategoryTransferObject"/>.</param>
         /// <returns>True if a product category is updated; otherwise false.</returns>
-        bool UpdateProductCategory(ProductCategoryTransferObject productCategory);
+        Task<bool> UpdateProductCategoryAsync(ProductCategoryTransferObject productCategory);
 
         /// <summary>
         /// Finds a Northwind product category using a specified identifier.
@@ -41,13 +42,13 @@ namespace Northwind.DataAccess.Products
         /// <param name="offset">An offset of the first object.</param>
         /// <param name="limit">A limit of returned objects.</param>
         /// <returns>A <see cref="List{T}"/> of <see cref="ProductCategoryTransferObject"/>.</returns>
-        IList<ProductCategoryTransferObject> SelectProductCategories(int offset, int limit);
+        Task<IList<ProductCategoryTransferObject>> SelectProductCategoriesAsync(int offset, int limit);
 
         /// <summary>
         /// Selects all Northwind product categories with specified names.
         /// </summary>
         /// <param name="productCategoryNames">A <see cref="ICollection{T}"/> of product category names.</param>
         /// <returns>A <see cref="List{T}"/> of <see cref="ProductCategoryTransferObject"/>.</returns>
-        IList<ProductCategoryTransferObject> SelectProductCategoriesByName(ICollection<string> productCategoryNames);
+        Task<IList<ProductCategoryTransferObject>> SelectProductCategoriesByNameAsync(ICollection<string> productCategoryNames);
     }
 }

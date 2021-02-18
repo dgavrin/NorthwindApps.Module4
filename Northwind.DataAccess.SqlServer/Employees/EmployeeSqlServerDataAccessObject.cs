@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Threading.Tasks;
 using Northwind.DataAccess.Employees;
 
 namespace Northwind.DataAccess.SqlServer.Employees
@@ -24,7 +25,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
         }
 
         /// <inheritdoc/>
-        public bool DeleteEmployee(int employeeId)
+        public async Task<bool> DeleteEmployeeAsync(int employeeId)
         {
             if (employeeId <= 0)
             {
@@ -42,7 +43,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
                 command.Parameters[employeeIdParameter].Value = employeeId;
 
                 this.OpenSqlConnectionIfItClose();
-                var result = command.ExecuteScalar();
+                var result = await command.ExecuteScalarAsync();
                 return ((int)result) > 0;
             }
         }
@@ -79,7 +80,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
         }
 
         /// <inheritdoc/>
-        public int InsertEmployee(EmployeeTransferObject employee)
+        public async Task<int> InsertEmployeeAsync(EmployeeTransferObject employee)
         {
             if (employee is null)
             {
@@ -95,13 +96,13 @@ namespace Northwind.DataAccess.SqlServer.Employees
                 AddSqlParameters(employee, command);
 
                 this.OpenSqlConnectionIfItClose();
-                var id = command.ExecuteScalar();
+                var id = await command.ExecuteScalarAsync();
                 return (int)id;
             }
         }
 
         /// <inheritdoc/>
-        public IList<EmployeeTransferObject> SelectEmployees(int offset, int limit)
+        public async Task<IList<EmployeeTransferObject>> SelectEmployeesAsync(int offset, int limit)
         {
             if (offset < 0)
             {
@@ -121,11 +122,11 @@ namespace Northwind.DataAccess.SqlServer.Employees
 
             string commandText = string.Format(CultureInfo.CurrentCulture, commandTemplate, offset, limit);
             this.OpenSqlConnectionIfItClose();
-            return this.ExecuteReader(commandText);
+            return await this.ExecuteReaderAsync(commandText);
         }
 
         /// <inheritdoc/>
-        public bool UpdateEmployee(EmployeeTransferObject employee)
+        public async Task<bool> UpdateEmployeeAsync(EmployeeTransferObject employee)
         {
             if (employee is null)
             {
@@ -146,7 +147,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
                 command.Parameters[employeeId].Value = employee.Id;
 
                 this.OpenSqlConnectionIfItClose();
-                var result = command.ExecuteScalar();
+                var result = await command.ExecuteScalarAsync();
                 return ((int)result) > 0;
             }
         }
@@ -324,14 +325,14 @@ namespace Northwind.DataAccess.SqlServer.Employees
             command.Parameters[employeeSalaryParameter].Value = employee.Salary;
         }
 
-        private IList<EmployeeTransferObject> ExecuteReader(string commandText)
+        private async Task<IList<EmployeeTransferObject>> ExecuteReaderAsync(string commandText)
         {
             var productCategories = new List<EmployeeTransferObject>();
 
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             using (var command = new SqlCommand(commandText, this.connection))
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-            using (var reader = command.ExecuteReader())
+            using (var reader = await command.ExecuteReaderAsync())
             {
                 while (reader.Read())
                 {

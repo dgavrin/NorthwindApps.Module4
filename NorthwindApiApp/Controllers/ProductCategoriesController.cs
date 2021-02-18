@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Products;
@@ -27,21 +28,21 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ProductCategory> CreateCategory(ProductCategory productCategory)
+        public async Task<ActionResult<ProductCategory>> CreateCategoryAsync(ProductCategory productCategory)
         {
             if (productCategory is null)
             {
                 return this.BadRequest();
             }
 
-            this.productCategoryManagementService.CreateCategory(productCategory);
+            await this.productCategoryManagementService.CreateCategoryAsync(productCategory);
             return this.Ok(productCategory);
         }
 
         [HttpGet("{categoryId}")]
-        public ActionResult<ProductCategory> GetCategory(int categoryId)
+        public async Task<ActionResult<ProductCategory>> GetCategoryAsync(int categoryId)
         {
-            if (this.productCategoryManagementService.TryShowCategory(categoryId, out ProductCategory productCategory))
+            if (this.productCategoryManagementService.TryShowCategoryAsync(categoryId, out ProductCategory productCategory))
             {
                 return this.Ok(productCategory);
             }
@@ -52,27 +53,33 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<ProductCategory>> GetCategories(int offset = 0, int limit = 10)
+        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategoriesAsync(int offset = 0, int limit = 10)
         {
-            return this.Ok(this.productCategoryManagementService.ShowCategories(offset, limit));
+            var categories = await this.productCategoryManagementService.ShowCategoriesAsync(offset, limit);
+            return this.Ok(categories);
         }
 
         [HttpPut("{categoryId}")]
-        public ActionResult UpdateCategory(int categoryId, ProductCategory productCategory)
+        public async Task<ActionResult> UpdateCategoryAsync(int categoryId, ProductCategory productCategory)
         {
+            if (productCategory is null)
+            {
+                throw new ArgumentNullException(nameof(productCategory));
+            }
+
             if (categoryId != productCategory.Id)
             {
                 return this.BadRequest();
             }
 
-            this.productCategoryManagementService.UpdateCategories(categoryId, productCategory);
+            await this.productCategoryManagementService.UpdateCategoriesAsync(categoryId, productCategory);
             return this.NoContent();
         }
 
         [HttpDelete("{categoryId}")]
-        public ActionResult<ProductCategory> DeleteCategory(int categoryId)
+        public async Task<ActionResult<ProductCategory>> DeleteCategoryAsync(int categoryId)
         {
-            if (this.productCategoryManagementService.DestroyCategory(categoryId))
+            if (await this.productCategoryManagementService.DestroyCategoryAsync(categoryId))
             {
                 return this.NoContent();
             }
@@ -83,7 +90,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPut("{categoryId}/picture")]
-        public ActionResult PutPicture(int categoryId, IFormFile formFile)
+        public async Task<ActionResult> PutPictureAsync(int categoryId, IFormFile formFile)
         {
             if (categoryId < 1)
             {
@@ -91,8 +98,8 @@ namespace NorthwindApiApp.Controllers
             }
 
             using var stream = new MemoryStream();
-            formFile?.CopyTo(stream);
-            if (!this.productCategoryPicturesService.UpdatePicture(categoryId, stream))
+            await formFile?.CopyToAsync(stream);
+            if (!(await this.productCategoryPicturesService.UpdatePictureAsync(categoryId, stream)))
             {
                 return this.NotFound();
             }
@@ -101,7 +108,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet("{categoryId}/picture")]
-        public ActionResult<byte[]> GetPicture(int categoryId)
+        public async Task<ActionResult<byte[]>> GetPicture(int categoryId)
         {
             if (this.productCategoryPicturesService.TryShowPicture(categoryId, out byte[] picture))
             {
@@ -112,9 +119,9 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpDelete("{categoryId}/picture")]
-        public ActionResult DeletePicture(int categoryId)
+        public async Task<ActionResult> DeletePictureAsync(int categoryId)
         {
-            if (this.productCategoryPicturesService.DestroyPicture(categoryId))
+            if (await this.productCategoryPicturesService.DestroyPictureAsync(categoryId))
             {
                 return this.NoContent();
             }

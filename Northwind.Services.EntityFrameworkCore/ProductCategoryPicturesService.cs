@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -40,14 +41,14 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public bool UpdatePicture(int categoryId, Stream stream)
+        public async Task<bool> UpdatePictureAsync(int categoryId, Stream stream)
         {
             if (stream is null)
             {
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            var category = this.context.ProductCategories.Find(categoryId);
+            var category = await this.context.ProductCategories.FindAsync(categoryId);
             if (category is null)
             {
                 return false;
@@ -55,22 +56,22 @@ namespace Northwind.Services.EntityFrameworkCore
 
             using var memoryStream = new MemoryStream();
             stream.Seek(0, SeekOrigin.Begin);
-            stream.CopyTo(memoryStream);
+            await stream.CopyToAsync(memoryStream);
             category.Picture = memoryStream.ToArray();
             this.context.Update(category);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
             return true;
         }
 
         /// <inheritdoc/>
-        public bool DestroyPicture(int categoryId)
+        public async Task<bool> DestroyPictureAsync(int categoryId)
         {
             if (categoryId < 1)
             {
                 throw new ArgumentException("CategoryId can't be less than one.", nameof(categoryId));
             }
 
-            var category = this.context.ProductCategories.Find(categoryId);
+            var category = await this.context.ProductCategories.FindAsync(categoryId);
             if (category is null)
             {
                 return false;
@@ -78,7 +79,7 @@ namespace Northwind.Services.EntityFrameworkCore
 
             category.Picture = null;
             this.context.Update(category);
-            this.context.SaveChanges();
+            await this.context.SaveChangesAsync();
             return true;
         }
     }

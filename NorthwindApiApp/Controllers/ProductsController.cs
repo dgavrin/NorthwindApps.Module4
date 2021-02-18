@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Products;
 
@@ -12,29 +13,33 @@ namespace NorthwindApiApp.Controllers
     {
         private IProductManagementService productManagementService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ProductsController"/> class.
+        /// </summary>
+        /// <param name="productManagementService">IProductManagementService.</param>
         public ProductsController(IProductManagementService productManagementService)
         {
             this.productManagementService = productManagementService ?? throw new ArgumentNullException(nameof(productManagementService));
         }
 
         [HttpPost]
-        public ActionResult<Product> CreateProduct(Product product)
+        public async Task<ActionResult<Product>> CreateProductAsync(Product product)
         {
             if (product is null)
             {
                 return this.BadRequest();
             }
 
-            this.productManagementService.CreateProduct(product);
+            await this.productManagementService.CreateProductAsync(product);
             return this.Ok(product);
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Product>> GetProducts(int offset = 0, int limit = 10)
+        public async Task<ActionResult<IEnumerable<Product>>> GetProductsAsync(int offset = 0, int limit = 10)
         {
             if (offset >= 0 && limit > 0)
             {
-                return this.Ok(this.productManagementService.ShowProducts(offset, limit));
+                return this.Ok(await this.productManagementService.ShowProductsAsync(offset, limit));
             }
             else
             {
@@ -56,21 +61,26 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPut("{productId}")]
-        public ActionResult UpdateProduct(int productId, Product product)
+        public async Task<ActionResult> UpdateProductAsync(int productId, Product product)
         {
+            if (product is null)
+            {
+                throw new ArgumentNullException(nameof(product));
+            }
+
             if (productId != product.Id)
             {
                 return this.BadRequest();
             }
 
-            this.productManagementService.UpdateProduct(productId, product);
+            await this.productManagementService.UpdateProductAsync(productId, product);
             return this.NoContent();
         }
 
         [HttpDelete("{productId}")]
-        public ActionResult<Product> DeleteProduct(int productId)
+        public async Task<ActionResult<Product>> DeleteProductAsync(int productId)
         {
-            if (this.productManagementService.DestroyProduct(productId))
+            if (await this.productManagementService.DestroyProductAsync(productId))
             {
                 return this.NoContent();
             }
