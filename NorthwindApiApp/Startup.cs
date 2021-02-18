@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Northwind.DataAccess.SqlServer;
+using Northwind.DataAccess.SqlServer.Employees;
+using Northwind.DataAccess.SqlServer.Products;
+using Northwind.Services.Employees;
 using Northwind.Services.EntityFrameworkCore;
 using Northwind.Services.Products;
 
@@ -34,6 +37,7 @@ namespace NorthwindApiApp
             services.AddTransient<IProductManagementService, ProductManagementDataAccessService>();
             services.AddTransient<IProductCategoryManagementService, ProductCategoriesManagementDataAccessService>();
             services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesManagementDataAccessService>();
+            services.AddTransient<IEmployeeManagementService, EmployeesManagementDataAccessService>();
             services.AddDbContext<NorthwindContext>(opt => opt.UseInMemoryDatabase("Northwind"));
             services.AddControllers();
             services.AddSwaggerGen(c =>
