@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Northwind.Services.Employees;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -18,6 +19,9 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         public DbSet<ProductCategory> ProductCategories { get; set; }
+
         public DbSet<Product> Products { get; set; }
+
+        public DbSet<Employee> Employees { get; set; }
     }
 }

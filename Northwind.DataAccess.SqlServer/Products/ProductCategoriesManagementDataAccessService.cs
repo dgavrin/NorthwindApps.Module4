@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using Northwind.DataAccess.Products;
 using Northwind.Services.Products;
 
-namespace Northwind.DataAccess.SqlServer
+namespace Northwind.DataAccess.SqlServer.Products
 {
     public class ProductCategoriesManagementDataAccessService : IProductCategoryManagementService
     {

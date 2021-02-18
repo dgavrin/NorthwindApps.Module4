@@ -4,7 +4,7 @@ using System.IO;
 using Northwind.DataAccess.Products;
 using Northwind.Services.Products;
 
-namespace Northwind.DataAccess.SqlServer
+namespace Northwind.DataAccess.SqlServer.Products
 {
     public class ProductCategoryPicturesManagementDataAccessService : IProductCategoryPicturesService
     {
