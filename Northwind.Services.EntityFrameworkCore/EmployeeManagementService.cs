@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Northwind.Services.Employees;
+using Northwind.Services.EntityFrameworkCore.Context;
 
 namespace Northwind.Services.EntityFrameworkCore
 {
@@ -29,16 +30,16 @@ namespace Northwind.Services.EntityFrameworkCore
 
             if (this.context.Employees.Any())
             {
-                employee.Id = this.context.Employees.Max(e => e.Id) + 1;
+                employee.EmployeeId = this.context.Employees.Max(e => e.EmployeeId) + 1;
             }
             else
             {
-                employee.Id = 0;
+                employee.EmployeeId = 0;
             }
 
             this.context.Employees.Add(employee);
             await this.context.SaveChangesAsync();
-            return employee.Id;
+            return employee.EmployeeId;
         }
 
         /// <inheritdoc/>
@@ -60,7 +61,7 @@ namespace Northwind.Services.EntityFrameworkCore
         /// <inheritdoc/>
         public async Task<IList<Employee>> ShowEmployeesAsync(int offset, int limit)
         {
-            return this.context.Employees.Where(e => e.Id >= offset).Take(limit).ToList();
+            return this.context.Employees.Where(e => e.EmployeeId >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
@@ -78,7 +79,7 @@ namespace Northwind.Services.EntityFrameworkCore
                 throw new ArgumentNullException(nameof(employee));
             }
 
-            var newEmployee = this.context.Employees.Single(e => e.Id == employeeId);
+            var newEmployee = this.context.Employees.Single(e => e.EmployeeId == employeeId);
             if (newEmployee is not null)
             {
                 newEmployee.LastName = employee.LastName;

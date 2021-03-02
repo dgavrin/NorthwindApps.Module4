@@ -95,7 +95,7 @@ namespace Northwind.DataAccess.SqlServer.Products
                 throw new ArgumentNullException(nameof(product));
             }
 
-            if (productId != product.Id)
+            if (productId != product.ProductId)
             {
                 return false;
             }

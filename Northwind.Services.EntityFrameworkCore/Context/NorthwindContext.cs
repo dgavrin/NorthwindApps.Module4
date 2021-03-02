@@ -1,7 +1,6 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Northwind.Services.EntityFrameworkCore.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using Northwind.Services.Employees;
+using Northwind.Services.Products;
 
 #nullable disable
 #pragma warning disable CA1062
@@ -9,7 +8,7 @@ using Northwind.Services.EntityFrameworkCore.Entities;
 #pragma warning disable SA1600
 #pragma warning disable SA1601
 
-namespace Northwind.Services.EntityFrameworkCore.NorthwindContext
+namespace Northwind.Services.EntityFrameworkCore.Context
 {
     public partial class NorthwindContext : DbContext
     {
@@ -34,15 +33,6 @@ namespace Northwind.Services.EntityFrameworkCore.NorthwindContext
         public virtual DbSet<Employee> Employees { get; set; }
 
         public virtual DbSet<Product> Products { get; set; }
-
-        /// <inheritdoc/>
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("data source=(localdb)\\MSSQLLocalDB;Integrated Security=True;Database=Northwind;");
-            }
-        }
 
         /// <inheritdoc/>
         protected override void OnModelCreating(ModelBuilder modelBuilder)

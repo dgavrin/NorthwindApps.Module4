@@ -54,7 +54,7 @@ namespace Northwind.DataAccess.Employees
 
             EmployeeTransferObject employeeTransferObject = new EmployeeTransferObject()
             {
-                Id = employee.Id,
+                Id = employee.EmployeeId,
                 LastName = employee.LastName,
                 FirstName = employee.FirstName,
                 Title = employee.Title,
@@ -72,7 +72,7 @@ namespace Northwind.DataAccess.Employees
                 Notes = employee.Notes,
                 ReportsTo = employee.ReportsTo,
                 PhotoPath = employee.PhotoPath,
-                Salary = employee.Salary,
+                Salary = (double)employee.Salary,
             };
 
             return employeeTransferObject;
@@ -87,13 +87,13 @@ namespace Northwind.DataAccess.Employees
 
             Services.Employees.Employee employee = new Services.Employees.Employee()
             {
-                Id = employeeTransferObject.Id,
+                EmployeeId = employeeTransferObject.Id,
                 LastName = employeeTransferObject.LastName,
                 FirstName = employeeTransferObject.FirstName,
                 Title = employeeTransferObject.Title,
                 TitleOfCountesy = employeeTransferObject.TitleOfCountesy,
-                BirthDate = employeeTransferObject.BirthDate,
-                HireDate = employeeTransferObject.HireDate,
+                BirthDate = (DateTime)employeeTransferObject.BirthDate,
+                HireDate = (DateTime)employeeTransferObject.HireDate,
                 Address = employeeTransferObject.Address,
                 City = employeeTransferObject.City,
                 Region = employeeTransferObject.Region,

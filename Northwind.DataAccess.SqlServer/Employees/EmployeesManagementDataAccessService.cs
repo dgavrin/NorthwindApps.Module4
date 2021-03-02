@@ -83,7 +83,7 @@ namespace Northwind.DataAccess.SqlServer.Employees
                 throw new ArgumentNullException(nameof(employee));
             }
 
-            if (employeeId != employee.Id)
+            if (employeeId != employee.EmployeeId)
             {
                 return false;
             }

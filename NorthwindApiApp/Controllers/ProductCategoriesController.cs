@@ -28,7 +28,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ProductCategory>> CreateCategoryAsync(ProductCategory productCategory)
+        public async Task<ActionResult<Category>> CreateCategoryAsync(Category productCategory)
         {
             if (productCategory is null)
             {
@@ -40,9 +40,9 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet("{categoryId}")]
-        public async Task<ActionResult<ProductCategory>> GetCategoryAsync(int categoryId)
+        public async Task<ActionResult<Category>> GetCategoryAsync(int categoryId)
         {
-            if (this.productCategoryManagementService.TryShowCategoryAsync(categoryId, out ProductCategory productCategory))
+            if (this.productCategoryManagementService.TryShowCategoryAsync(categoryId, out Category productCategory))
             {
                 return this.Ok(productCategory);
             }
@@ -53,21 +53,21 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductCategory>>> GetCategoriesAsync(int offset = 0, int limit = 10)
+        public async Task<ActionResult<IEnumerable<Category>>> GetCategoriesAsync(int offset = 0, int limit = 10)
         {
             var categories = await this.productCategoryManagementService.ShowCategoriesAsync(offset, limit);
             return this.Ok(categories);
         }
 
         [HttpPut("{categoryId}")]
-        public async Task<ActionResult> UpdateCategoryAsync(int categoryId, ProductCategory productCategory)
+        public async Task<ActionResult> UpdateCategoryAsync(int categoryId, Category productCategory)
         {
             if (productCategory is null)
             {
                 throw new ArgumentNullException(nameof(productCategory));
             }
 
-            if (categoryId != productCategory.Id)
+            if (categoryId != productCategory.CategoryId)
             {
                 return this.BadRequest();
             }
@@ -77,7 +77,7 @@ namespace NorthwindApiApp.Controllers
         }
 
         [HttpDelete("{categoryId}")]
-        public async Task<ActionResult<ProductCategory>> DeleteCategoryAsync(int categoryId)
+        public async Task<ActionResult<Category>> DeleteCategoryAsync(int categoryId)
         {
             if (await this.productCategoryManagementService.DestroyCategoryAsync(categoryId))
             {

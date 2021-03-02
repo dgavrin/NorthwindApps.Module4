@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Northwind.Services.EntityFrameworkCore.Context;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -23,34 +24,34 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public async Task<int> CreateCategoryAsync(ProductCategory productCategory)
+        public async Task<int> CreateCategoryAsync(Category productCategory)
         {
             if (productCategory is null)
             {
                 return -1;
             }
 
-            if (this.context.ProductCategories.Any())
+            if (this.context.Categories.Any())
             {
-                productCategory.Id = this.context.ProductCategories.Max(c => c.Id) + 1;
+                productCategory.CategoryId = this.context.Categories.Max(c => c.CategoryId) + 1;
             }
             else
             {
-                productCategory.Id = 0;
+                productCategory.CategoryId = 0;
             }
 
-            this.context.ProductCategories.Add(productCategory);
+            this.context.Categories.Add(productCategory);
             await this.context.SaveChangesAsync();
-            return productCategory.Id;
+            return productCategory.CategoryId;
         }
 
         /// <inheritdoc/>
         public async Task<bool> DestroyCategoryAsync(int categoryId)
         {
-            var category = await this.context.ProductCategories.FindAsync(categoryId);
+            var category = await this.context.Categories.FindAsync(categoryId);
             if (category is not null)
             {
-                this.context.ProductCategories.Remove(category);
+                this.context.Categories.Remove(category);
                 await this.context.SaveChangesAsync();
                 return true;
             }
@@ -61,36 +62,36 @@ namespace Northwind.Services.EntityFrameworkCore
         }
 
         /// <inheritdoc/>
-        public async Task<IList<ProductCategory>> LookupCategoriesByNameAsync(IList<string> names)
+        public async Task<IList<Category>> LookupCategoriesByNameAsync(IList<string> names)
         {
             throw new NotImplementedException();
         }
 
         /// <inheritdoc/>
-        public async Task<IList<ProductCategory>> ShowCategoriesAsync(int offset, int limit)
+        public async Task<IList<Category>> ShowCategoriesAsync(int offset, int limit)
         {
-            return this.context.ProductCategories.Where(c => c.Id >= offset).Take(limit).ToList();
+            return this.context.Categories.Where(c => c.CategoryId >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
-        public bool TryShowCategoryAsync(int categoryId, out ProductCategory productCategory)
+        public bool TryShowCategoryAsync(int categoryId, out Category productCategory)
         {
-            productCategory = this.context.ProductCategories.Find(categoryId);
+            productCategory = this.context.Categories.Find(categoryId);
             return productCategory is not null;
         }
 
         /// <inheritdoc/>
-        public async Task<bool> UpdateCategoriesAsync(int categoryId, ProductCategory productCategory)
+        public async Task<bool> UpdateCategoriesAsync(int categoryId, Category productCategory)
         {
             if (productCategory is null)
             {
                 throw new ArgumentNullException(nameof(productCategory));
             }
 
-            var category = this.context.ProductCategories.Single(c => c.Id == categoryId);
+            var category = this.context.Categories.Single(c => c.CategoryId == categoryId);
             if (category is not null)
             {
-                category.Name = productCategory.Name;
+                category.CategoryName = productCategory.CategoryName;
                 category.Description = productCategory.Description;
                 await this.context.SaveChangesAsync();
                 return true;

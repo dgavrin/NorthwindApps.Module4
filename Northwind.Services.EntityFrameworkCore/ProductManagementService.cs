@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Northwind.Services.EntityFrameworkCore.Context;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -32,16 +33,16 @@ namespace Northwind.Services.EntityFrameworkCore
 
             if (this.context.Products.Any())
             {
-                product.Id = this.context.Products.Max(p => p.Id) + 1;
+                product.ProductId = this.context.Products.Max(p => p.ProductId) + 1;
             }
             else
             {
-                product.Id = 0;
+                product.ProductId = 0;
             }
 
             this.context.Products.Add(product);
             await this.context.SaveChangesAsync();
-            return product.Id;
+            return product.ProductId;
         }
 
         /// <inheritdoc/>
@@ -69,7 +70,7 @@ namespace Northwind.Services.EntityFrameworkCore
         /// <inheritdoc/>
         public async Task<IList<Product>> ShowProductsAsync(int offset, int limit)
         {
-            return this.context.Products.Where(p => p.Id >= offset).Take(limit).ToList();
+            return this.context.Products.Where(p => p.ProductId >= offset).Take(limit).ToList();
         }
 
         /// <inheritdoc/>
@@ -93,10 +94,10 @@ namespace Northwind.Services.EntityFrameworkCore
                 throw new ArgumentNullException(nameof(product));
             }
 
-            var newProduct = this.context.Products.Single(c => c.Id == productId);
+            var newProduct = this.context.Products.Single(c => c.ProductId == productId);
             if (newProduct is not null)
             {
-                newProduct.Name = product.Name;
+                newProduct.ProductName = product.ProductName;
                 newProduct.SupplierId = product.SupplierId;
                 newProduct.CategoryId = product.CategoryId;
                 newProduct.QuantityPerUnit = product.QuantityPerUnit;

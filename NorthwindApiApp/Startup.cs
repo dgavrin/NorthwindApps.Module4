@@ -10,7 +10,7 @@ using Northwind.DataAccess.SqlServer;
 using Northwind.DataAccess.SqlServer.Employees;
 using Northwind.DataAccess.SqlServer.Products;
 using Northwind.Services.Employees;
-using Northwind.Services.EntityFrameworkCore;
+using Northwind.Services.EntityFrameworkCore.Context;
 using Northwind.Services.Products;
 
 namespace NorthwindApiApp

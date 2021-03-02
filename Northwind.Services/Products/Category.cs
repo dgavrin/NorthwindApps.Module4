@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Microsoft.EntityFrameworkCore;
 
 #nullable disable
 #pragma warning disable CS1591
@@ -10,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 #pragma warning disable SA1600
 #pragma warning disable CA1819
 
-namespace Northwind.Services.EntityFrameworkCore.Entities
+namespace Northwind.Services.Products
 {
     public partial class Category
     {
