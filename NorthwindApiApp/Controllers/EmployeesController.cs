@@ -59,7 +59,7 @@ namespace NorthwindApiApp.Controllers
         [HttpPut("{employeeId}")]
         public async Task<ActionResult> UpdateEmployeeAsync(int employeeId, Employee employee)
         {
-            if (employeeId != employee.Id)
+            if (employeeId != employee.EmployeeId)
             {
                 return this.BadRequest();
             }

@@ -68,7 +68,7 @@ namespace NorthwindApiApp.Controllers
                 throw new ArgumentNullException(nameof(product));
             }
 
-            if (productId != product.Id)
+            if (productId != product.ProductId)
             {
                 return this.BadRequest();
             }

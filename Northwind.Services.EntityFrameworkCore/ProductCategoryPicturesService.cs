@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Northwind.Services.EntityFrameworkCore.Context;
 using Northwind.Services.Products;
 
 namespace Northwind.Services.EntityFrameworkCore
@@ -29,7 +30,7 @@ namespace Northwind.Services.EntityFrameworkCore
                 throw new ArgumentException("CategoryId can't be less than one.", nameof(categoryId));
             }
 
-            var category = this.context.ProductCategories.Find(categoryId);
+            var category = this.context.Categories.Find(categoryId);
             if (category is null)
             {
                 bytes = null;
@@ -48,7 +49,7 @@ namespace Northwind.Services.EntityFrameworkCore
                 throw new ArgumentNullException(nameof(stream));
             }
 
-            var category = await this.context.ProductCategories.FindAsync(categoryId);
+            var category = await this.context.Categories.FindAsync(categoryId);
             if (category is null)
             {
                 return false;
@@ -71,7 +72,7 @@ namespace Northwind.Services.EntityFrameworkCore
                 throw new ArgumentException("CategoryId can't be less than one.", nameof(categoryId));
             }
 
-            var category = await this.context.ProductCategories.FindAsync(categoryId);
+            var category = await this.context.Categories.FindAsync(categoryId);
             if (category is null)
             {
                 return false;

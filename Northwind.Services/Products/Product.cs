@@ -1,58 +1,42 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+#nullable disable
+#pragma warning disable CS1591
+#pragma warning disable SA1601
+#pragma warning disable SA1600
+
 namespace Northwind.Services.Products
 {
-    /// <summary>
-    /// Represents a product.
-    /// </summary>
-    public class Product
+    public partial class Product
     {
-        /// <summary>
-        /// Gets or sets a product identifier.
-        /// </summary>
-        public int Id { get; set; }
+        [Key]
+        [Column("ProductID")]
+        public int ProductId { get; set; }
 
-        /// <summary>
-        /// Gets or sets a product name.
-        /// </summary>
-        public string Name { get; set; }
+        [StringLength(50)]
+        public string ProductName { get; set; }
 
-        /// <summary>
-        /// Gets or sets a supplier identifier.
-        /// </summary>
+        [Column("SupplierID")]
         public int? SupplierId { get; set; }
 
-        /// <summary>
-        /// Gets or sets a category identifier.
-        /// </summary>
         public int? CategoryId { get; set; }
 
-        /// <summary>
-        /// Gets or sets a quantity per unit.
-        /// </summary>
+        [StringLength(50)]
         public string QuantityPerUnit { get; set; }
 
-        /// <summary>
-        /// Gets or sets a unit price.
-        /// </summary>
+        [Column(TypeName = "decimal(18, 0)")]
         public decimal? UnitPrice { get; set; }
 
-        /// <summary>
-        /// Gets or sets an amount of units in stock.
-        /// </summary>
         public short? UnitsInStock { get; set; }
 
-        /// <summary>
-        /// Gets or sets an amount of units on order.
-        /// </summary>
         public short? UnitsOnOrder { get; set; }
 
-        /// <summary>
-        /// Gets or sets a reorder level.
-        /// </summary>
         public short? ReorderLevel { get; set; }
 
-        /// <summary>
-        /// Gets or sets a value indicating whether a product is discontinued.
-        /// </summary>
         public bool Discontinued { get; set; }
     }
 }
+#pragma warning restore SA1600
+#pragma warning restore SA1601
+#pragma warning restore CS1591

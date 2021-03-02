@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Northwind.Services.Products;
 
 namespace Northwind.DataAccess.Products
 {
@@ -59,7 +60,7 @@ namespace Northwind.DataAccess.Products
         /// </summary>
         public bool Discontinued { get; set; }
 
-        public static explicit operator ProductTransferObject(Services.Products.Product product)
+        public static explicit operator ProductTransferObject(Product product)
         {
             if (product is null)
             {
@@ -68,8 +69,8 @@ namespace Northwind.DataAccess.Products
 
             ProductTransferObject productTransferObject = new ProductTransferObject()
             {
-                Id = product.Id,
-                Name = product.Name,
+                Id = product.ProductId,
+                Name = product.ProductName,
                 SupplierId = product.SupplierId,
                 CategoryId = product.CategoryId,
                 QuantityPerUnit = product.QuantityPerUnit,
@@ -83,17 +84,17 @@ namespace Northwind.DataAccess.Products
             return productTransferObject;
         }
 
-        public static explicit operator Services.Products.Product(ProductTransferObject productTransferObject)
+        public static explicit operator Product(ProductTransferObject productTransferObject)
         {
             if (productTransferObject is null)
             {
                 throw new ArgumentNullException(nameof(productTransferObject));
             }
 
-            Services.Products.Product product = new Services.Products.Product()
+            Product product = new Product()
             {
-                Id = productTransferObject.Id,
-                Name = productTransferObject.Name,
+                ProductId = productTransferObject.Id,
+                ProductName = productTransferObject.Name,
                 SupplierId = productTransferObject.SupplierId,
                 CategoryId = productTransferObject.CategoryId,
                 QuantityPerUnit = productTransferObject.QuantityPerUnit,
