@@ -63,5 +63,28 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
             blogArticle = this.context.Articles.Find(blogArticleId);
             return blogArticle is not null;
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateBlogArticleAsync(int blogArticleId, BlogArticle blogArticle)
+        {
+            if (blogArticle is null)
+            {
+                throw new ArgumentNullException(nameof(blogArticle));
+            }
+
+            var article = this.context.Articles.Single(a => a.BlogArticleId == blogArticleId);
+            if (article is not null)
+            {
+                article.Title = blogArticle.Title;
+                article.Body = blogArticle.Body;
+                article.PublicationDate = blogArticle.PublicationDate;
+                await this.context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

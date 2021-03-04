@@ -38,5 +38,13 @@ namespace Northwind.Services.Blogging
         /// <param name="blogArticle">A blog article to return.</param>
         /// <returns>Returns true if a blog article is returned; otherwise false.</returns>
         bool TryShowBlogArticle(int blogArticleId, out BlogArticle blogArticle);
+
+        /// <summary>
+        /// Updates a blog article.
+        /// </summary>
+        /// <param name="blogArticleId">A blog article identifier.</param>
+        /// <param name="blogArticle">A <see cref="BlogArticle"/></param>
+        /// <returns>True if a blog article is updated; otherwise false.</returns>
+        Task<bool> UpdateBlogArticleAsync(int blogArticleId, BlogArticle blogArticle);
     }
 }

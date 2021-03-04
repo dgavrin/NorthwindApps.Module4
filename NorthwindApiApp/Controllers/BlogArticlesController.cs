@@ -89,5 +89,17 @@ namespace NorthwindApiApp.Controllers
                 return this.BadRequest();
             }
         }
+
+        [HttpPut("{blogArticleId}")]
+        public async Task<ActionResult> UpdateBlogArticleAsync(int blogArticleId, BlogArticleUpdateQuery blogArticleUpdateQuery)
+        {
+            if (blogArticleId <= 0)
+            {
+                return this.BadRequest();
+            }
+
+            await this.bloggingService.UpdateBlogArticleAsync(blogArticleId, blogArticleUpdateQuery);
+            return this.NoContent();
+        }
     }
 }
