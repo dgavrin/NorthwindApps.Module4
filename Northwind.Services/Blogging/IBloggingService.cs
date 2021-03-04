@@ -14,7 +14,7 @@ namespace Northwind.Services.Blogging
         /// </summary>
         /// <param name="blogArticle">A <see cref="BlogArticle"/> to create.</param>
         /// <returns>An identifier of a created blog article.</returns>
-        Task<int> CreateBlogArticle(BlogArticle blogArticle);
+        Task<int> CreateBlogArticleAsync(BlogArticle blogArticle);
 
         /// <summary>
         /// Destroys an exited blog article.
@@ -22,5 +22,13 @@ namespace Northwind.Services.Blogging
         /// <param name="blogArticleId">A blog article identifier.</param>
         /// <returns>True if a blog article is destroyed; otherwise false.</returns>
         Task<bool> DestroyBlogArticleAsync(int blogArticleId);
+
+        /// <summary>
+        /// Shows a list of blog articles using specified offset and limit for pagination.
+        /// </summary>
+        /// <param name="offset">An offset of the first element to return.</param>
+        /// <param name="limit">A limit of elements to return.</param>
+        /// <returns>A <see cref="IList{T}"/> of <see cref="BlogArticle"/>.</returns>
+        Task<IList<BlogArticle>> ShowBlogArticlesAsync(int offset, int limit);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Northwind.Services.Blogging;
@@ -29,7 +30,7 @@ namespace NorthwindApiApp.Controllers
                 return this.BadRequest();
             }
 
-            return await this.bloggingService.CreateBlogArticle(blogArticle);
+            return await this.bloggingService.CreateBlogArticleAsync(blogArticle);
         }
 
         [HttpDelete("{blogArticleId}")]
@@ -43,6 +44,30 @@ namespace NorthwindApiApp.Controllers
             {
                 return this.NotFound();
             }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<BlogArticleShortResponse>>> GetBlogArticlesAsync([FromServices] IEmployeeManagementService employeeManagementService, int offset = 0, int limit = 10)
+        {
+            if (offset < 0 ||
+                limit <= 0 ||
+                employeeManagementService is null)
+            {
+                return this.BadRequest();
+            }
+
+            var blogArticles = await this.bloggingService.ShowBlogArticlesAsync(offset, limit);
+            var blogArticleShortResponseList = new List<BlogArticleShortResponse>();
+            foreach (var article in blogArticles)
+            {
+                if (employeeManagementService.TryShowEmployee(article.EmployeeId, out Employee employee))
+                {
+                    var blogArticleShortResponse = new BlogArticleShortResponse(article, employee);
+                    blogArticleShortResponseList.Add(blogArticleShortResponse);
+                }
+            }
+
+            return this.Ok(blogArticleShortResponseList);
         }
     }
 }

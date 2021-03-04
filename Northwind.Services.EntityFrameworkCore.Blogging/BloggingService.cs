@@ -22,7 +22,7 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
         }
 
         /// <inheritdoc/>
-        public async Task<int> CreateBlogArticle(BlogArticle blogArticle)
+        public async Task<int> CreateBlogArticleAsync(BlogArticle blogArticle)
         {
             if (blogArticle is null)
             {
@@ -49,6 +49,12 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
             {
                 return false;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<BlogArticle>> ShowBlogArticlesAsync(int offset, int limit)
+        {
+            return this.context.Articles.Where(a => a.BlogArticleId >= offset).Take(limit).ToList();
         }
     }
 }
