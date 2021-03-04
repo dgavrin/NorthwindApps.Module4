@@ -14,12 +14,16 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging.Context
 
         public DbSet<BlogArticleProduct> ArticleProduct { get; set; }
 
+        public DbSet<BlogComment> Comments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<BlogArticle>()
                 .HasKey(a => a.BlogArticleId);
             modelBuilder.Entity<BlogArticleProduct>()
                 .HasKey(ap => ap.BlogArticleProductId);
+            modelBuilder.Entity<BlogComment>()
+                .HasKey(c => c.BlogCommentId);
 
             modelBuilder.Entity<BlogArticle>(
                 eb =>
@@ -53,6 +57,20 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging.Context
                     ap.Property(p => p.ProductId)
                         .HasColumnType("int")
                         .HasColumnName("product_id");
+                });
+
+            modelBuilder.Entity<BlogComment>(
+                c =>
+                {
+                    c.Property(p => p.BlogCommentId)
+                        .HasColumnType("int")
+                        .HasColumnName("blog_comment_id");
+                    c.Property(p => p.Text)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("text");
+                    c.Property(p => p.CustomerId)
+                        .HasColumnType("int")
+                        .HasColumnName("customer_id");
                 });
         }
     }
