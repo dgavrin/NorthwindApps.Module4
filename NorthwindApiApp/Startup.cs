@@ -9,7 +9,11 @@ using Microsoft.OpenApi.Models;
 using Northwind.DataAccess.SqlServer;
 using Northwind.DataAccess.SqlServer.Employees;
 using Northwind.DataAccess.SqlServer.Products;
+using Northwind.Services.Blogging;
 using Northwind.Services.Employees;
+using Northwind.Services.EntityFrameworkCore;
+using Northwind.Services.EntityFrameworkCore.Blogging;
+using Northwind.Services.EntityFrameworkCore.Blogging.Context;
 using Northwind.Services.EntityFrameworkCore.Context;
 using Northwind.Services.Products;
 
@@ -27,19 +31,19 @@ namespace NorthwindApiApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped((service) =>
-            {
-                var sqlConnection = new SqlConnection(this.Configuration.GetConnectionString("NorthwindConnection"));
-                return sqlConnection;
-            });
+            var northwindConnectionString = this.Configuration.GetConnectionString("NorthwindConnection");
+            services.AddDbContext<NorthwindContext>(o => o.UseSqlServer(northwindConnectionString));
+            var bloggingConnectionString = this.Configuration.GetConnectionString("BloggingConnection");
+            services.AddDbContext<BloggingContext>(o => o.UseSqlServer(bloggingConnectionString));
 
-            services.AddTransient<NorthwindDataAccessFactory, SqlServerDataAccessFactory>();
-            services.AddTransient<IProductManagementService, ProductManagementDataAccessService>();
-            services.AddTransient<IProductCategoryManagementService, ProductCategoriesManagementDataAccessService>();
-            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesManagementDataAccessService>();
-            services.AddTransient<IEmployeeManagementService, EmployeesManagementDataAccessService>();
-            services.AddDbContext<NorthwindContext>(opt => opt.UseInMemoryDatabase("Northwind"));
+            services.AddTransient<IProductManagementService, ProductManagementService>();
+            services.AddTransient<IProductCategoryManagementService, ProductCategoryManagementService>();
+            services.AddTransient<IProductCategoryPicturesService, ProductCategoryPicturesService>();
+            services.AddTransient<IEmployeeManagementService, EmployeeManagementService>();
+            services.AddTransient<IBloggingService, BloggingService>();
+
             services.AddControllers();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "NorthwindApiApp", Version = "v1" });

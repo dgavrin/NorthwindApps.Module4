@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Northwind.Services.EntityFrameworkCore.Blogging.Entities;
+using Northwind.Services.Blogging;
 
 namespace Northwind.Services.EntityFrameworkCore.Blogging.Context
 {
