@@ -56,5 +56,12 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
         {
             return this.context.Articles.Where(a => a.BlogArticleId >= offset).Take(limit).ToList();
         }
+
+        /// <inheritdoc/>
+        public bool TryShowBlogArticle(int blogArticleId, out BlogArticle blogArticle)
+        {
+            blogArticle = this.context.Articles.Find(blogArticleId);
+            return blogArticle is not null;
+        }
     }
 }

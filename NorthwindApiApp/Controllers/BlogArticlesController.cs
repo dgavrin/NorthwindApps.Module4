@@ -69,5 +69,25 @@ namespace NorthwindApiApp.Controllers
 
             return this.Ok(blogArticleShortResponseList);
         }
+
+        [HttpGet("{blogArticleId}")]
+        public async Task<ActionResult<BlogArticleFullResponse>> GetBlogArticle(int blogArticleId, [FromServices] IEmployeeManagementService employeeManagementService)
+        {
+            if (blogArticleId <= 0 ||
+                employeeManagementService is null)
+            {
+                return this.BadRequest();
+            }
+
+            if (this.bloggingService.TryShowBlogArticle(blogArticleId, out BlogArticle blogArticle))
+            {
+                employeeManagementService.TryShowEmployee(blogArticle.EmployeeId, out Employee employee);
+                return this.Ok(new BlogArticleFullResponse(blogArticle, employee));
+            }
+            else
+            {
+                return this.BadRequest();
+            }
+        }
     }
 }

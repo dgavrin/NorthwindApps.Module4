@@ -30,5 +30,13 @@ namespace Northwind.Services.Blogging
         /// <param name="limit">A limit of elements to return.</param>
         /// <returns>A <see cref="IList{T}"/> of <see cref="BlogArticle"/>.</returns>
         Task<IList<BlogArticle>> ShowBlogArticlesAsync(int offset, int limit);
+
+        /// <summary>
+        /// Try to show a blog article with specified indentifier.
+        /// </summary>
+        /// <param name="blogArticleId">A blog article identifier.</param>
+        /// <param name="blogArticle">A blog article to return.</param>
+        /// <returns>Returns true if a blog article is returned; otherwise false.</returns>
+        bool TryShowBlogArticle(int blogArticleId, out BlogArticle blogArticle);
     }
 }
