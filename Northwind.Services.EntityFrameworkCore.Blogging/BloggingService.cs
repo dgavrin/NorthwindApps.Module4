@@ -21,6 +21,7 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
             this.context = bloggingContext ?? throw new ArgumentNullException(nameof(bloggingContext));
         }
 
+        /// <inheritdoc/>
         public async Task<int> CreateBlogArticle(BlogArticle blogArticle)
         {
             if (blogArticle is null)
@@ -32,6 +33,22 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
             await this.context.Articles.AddAsync(blogArticle);
             await this.context.SaveChangesAsync();
             return blogArticle.BlogArticleId;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DestroyBlogArticleAsync(int blogArticleId)
+        {
+            var blogArticle = await this.context.Articles.FindAsync(blogArticleId);
+            if (blogArticle is not null)
+            {
+                this.context.Articles.Remove(blogArticle);
+                await this.context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

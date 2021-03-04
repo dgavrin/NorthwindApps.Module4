@@ -15,5 +15,12 @@ namespace Northwind.Services.Blogging
         /// <param name="blogArticle">A <see cref="BlogArticle"/> to create.</param>
         /// <returns>An identifier of a created blog article.</returns>
         Task<int> CreateBlogArticle(BlogArticle blogArticle);
+
+        /// <summary>
+        /// Destroys an exited blog article.
+        /// </summary>
+        /// <param name="blogArticleId">A blog article identifier.</param>
+        /// <returns>True if a blog article is destroyed; otherwise false.</returns>
+        Task<bool> DestroyBlogArticleAsync(int blogArticleId);
     }
 }

@@ -31,5 +31,18 @@ namespace NorthwindApiApp.Controllers
 
             return await this.bloggingService.CreateBlogArticle(blogArticle);
         }
+
+        [HttpDelete("{blogArticleId}")]
+        public async Task<ActionResult> DeleteBlogArticleAsync(int blogArticleId)
+        {
+            if (await this.bloggingService.DestroyBlogArticleAsync(blogArticleId))
+            {
+                return this.NoContent();
+            }
+            else
+            {
+                return this.NotFound();
+            }
+        }
     }
 }
