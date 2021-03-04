@@ -36,6 +36,34 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
         }
 
         /// <inheritdoc/>
+        public async Task<int> CreateLinkToProductForArticleAsync(int blogArticleId, int productId)
+        {
+            if (blogArticleId <= 0)
+            {
+                throw new ArgumentNullException(nameof(blogArticleId));
+            }
+
+            if (productId <= 0)
+            {
+                throw new ArgumentNullException(nameof(productId));
+            }
+
+            var linkToProductIsExist = (await this.GetProductsForArticleAsync(blogArticleId))
+                .Any(p => p.ArticleId == blogArticleId && p.ProductId == productId);
+            if (!linkToProductIsExist)
+            {
+                var blogArticleProduct = new BlogArticleProduct(blogArticleId, productId);
+                await this.context.ArticleProduct.AddAsync(blogArticleProduct);
+                await this.context.SaveChangesAsync();
+                return blogArticleProduct.BlogArticleProductId;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> DestroyBlogArticleAsync(int blogArticleId)
         {
             var blogArticle = await this.context.Articles.FindAsync(blogArticleId);
@@ -52,9 +80,41 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
         }
 
         /// <inheritdoc/>
+        public async Task<bool> DestroyLinkToProductForArticle(int blogArticleProductId)
+        {
+            var blogArticleProduct = await this.context.ArticleProduct.FindAsync(blogArticleProductId);
+            if (blogArticleProduct is not null)
+            {
+                this.context.ArticleProduct.Remove(blogArticleProduct);
+                await this.context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<BlogArticleProduct>> GetProductsForArticleAsync(int blogArticleId)
+        {
+            if (blogArticleId <= 0)
+            {
+                throw new ArgumentNullException(nameof(blogArticleId));
+            }
+
+            return this.context.ArticleProduct
+                               .Where(p => p.ArticleId == blogArticleId)
+                               .ToList();
+        }
+
+        /// <inheritdoc/>
         public async Task<IList<BlogArticle>> ShowBlogArticlesAsync(int offset, int limit)
         {
-            return this.context.Articles.Where(a => a.BlogArticleId >= offset).Take(limit).ToList();
+            return this.context.Articles
+                               .Where(a => a.BlogArticleId >= offset)
+                               .Take(limit)
+                               .ToList();
         }
 
         /// <inheritdoc/>
