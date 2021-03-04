@@ -35,10 +35,78 @@ namespace NorthwindApiApp.Controllers
             return await this.bloggingService.CreateBlogArticleAsync(blogArticle);
         }
 
+        [HttpPost("{blogArticleId}/product/{productId}")]
+        public async Task<ActionResult<int>> CreateLinkToProductForArticle(int blogArticleId, int productId, [FromServices] IProductManagementService productManagementService)
+        {
+            if (blogArticleId <= 0 ||
+                productId <= 0 ||
+                productManagementService is null ||
+                !(this.bloggingService.TryShowBlogArticle(blogArticleId, out _) &&
+                productManagementService.TryShowProduct(productId, out _)))
+            {
+                return this.BadRequest();
+            }
+
+            return await this.bloggingService.CreateLinkToProductForArticleAsync(blogArticleId, productId);
+        }
+
+        [HttpPost("{blogArticleId}/comments")]
+        public async Task<ActionResult<int>> CreateCommentAsync(int blogArticleId, BlogComment blogComment)
+        {
+            if (blogArticleId <= 0 ||
+                blogComment is null ||
+                blogComment.Text is null)
+            {
+                return this.BadRequest();
+            }
+
+            blogComment.ArticleId = blogArticleId;
+            return await this.bloggingService.CreateBlogCommentAsync(blogComment);
+        }
+
         [HttpDelete("{blogArticleId}")]
         public async Task<ActionResult> DeleteBlogArticleAsync(int blogArticleId)
         {
             if (await this.bloggingService.DestroyBlogArticleAsync(blogArticleId))
+            {
+                return this.NoContent();
+            }
+            else
+            {
+                return this.NotFound();
+            }
+        }
+
+        [HttpDelete("{blogArticleId}/product/{productId}")]
+        public async Task<ActionResult> DeleteLinkToProductForArticleAsync(int blogArticleId, int productId)
+        {
+            if (blogArticleId <= 0 ||
+                productId <= 0)
+            {
+                return this.BadRequest();
+            }
+
+            var blogArticleProduct = (await this.bloggingService.GetProductsForArticleAsync(blogArticleId))
+                .Single(ap => ap.ProductId == productId);
+            if (await this.bloggingService.DestroyLinkToProductForArticle(blogArticleProduct.BlogArticleProductId))
+            {
+                return this.NoContent();
+            }
+            else
+            {
+                return this.NotFound();
+            }
+        }
+
+        [HttpDelete("{blogArticleId}/comments/{blogCommentId}")]
+        public async Task<ActionResult> DeleteBlogCommentAsync(int blogCommentId)
+        {
+            if (blogCommentId <= 0)
+            {
+                return this.BadRequest();
+            }
+
+            if (await this.bloggingService.DestroyBlogCommentAsync(blogCommentId))
             {
                 return this.NoContent();
             }
@@ -70,6 +138,29 @@ namespace NorthwindApiApp.Controllers
             }
 
             return this.Ok(blogArticleShortResponseList);
+        }
+
+        [HttpGet("{blogArticleId}/product")]
+        public async Task<ActionResult<IEnumerable<BlogArticleProduct>>> GetProductsForArticle(int blogArticleId)
+        {
+            if (blogArticleId <= 0 ||
+                !this.bloggingService.TryShowBlogArticle(blogArticleId, out _))
+            {
+                return this.BadRequest();
+            }
+
+            return this.Ok(await this.bloggingService.GetProductsForArticleAsync(blogArticleId));
+        }
+
+        [HttpGet("{blogArticleId}/comments")]
+        public async Task<ActionResult<IEnumerable<BlogComment>>> GetCommentsForArticles(int blogArticleId)
+        {
+            if (blogArticleId <= 0)
+            {
+                return this.BadRequest();
+            }
+
+            return this.Ok(await this.bloggingService.GetCommentsForArticleAsync(blogArticleId));
         }
 
         [HttpGet("{blogArticleId}")]
@@ -104,53 +195,18 @@ namespace NorthwindApiApp.Controllers
             return this.NoContent();
         }
 
-        [HttpPost("{blogArticleId}/product/{productId}")]
-        public async Task<ActionResult<int>> CreateLinkToProductForArticle(int blogArticleId, int productId, [FromServices] IProductManagementService productManagementService)
+        [HttpPut("{blogArticleId}/comments/{blogCommentId}")]
+        public async Task<ActionResult> UpdateBlogCommentAsync(int blogArticleId, int blogCommentId, BlogComment blogComment)
         {
             if (blogArticleId <= 0 ||
-                productId <= 0 ||
-                productManagementService is null ||
-                !(this.bloggingService.TryShowBlogArticle(blogArticleId, out _) &&
-                productManagementService.TryShowProduct(productId, out _)))
+                blogCommentId <= 0 ||
+                blogComment is null)
             {
                 return this.BadRequest();
             }
 
-            return await this.bloggingService.CreateLinkToProductForArticleAsync(blogArticleId, productId);
-        }
-
-        [HttpGet("{blogArticleId}/product")]
-        public async Task<ActionResult<IEnumerable<BlogArticleProduct>>> GetProductsForArticle(int blogArticleId)
-        {
-            if (blogArticleId <= 0 ||
-                !this.bloggingService.TryShowBlogArticle(blogArticleId, out _))
-            {
-                return this.BadRequest();
-            }
-
-            return this.Ok(await this.bloggingService.GetProductsForArticleAsync(blogArticleId));
-        }
-
-
-        [HttpDelete("{blogArticleId}/product/{productId}")]
-        public async Task<ActionResult> DeleteLinkToProductForArticleAsync(int blogArticleId, int productId)
-        {
-            if (blogArticleId <= 0 ||
-                productId <= 0)
-            {
-                return this.BadRequest();
-            }
-
-            var blogArticleProduct = (await this.bloggingService.GetProductsForArticleAsync(blogArticleId))
-                .Single(ap => ap.ProductId == productId);
-            if (await this.bloggingService.DestroyLinkToProductForArticle(blogArticleProduct.BlogArticleProductId))
-            {
-                return this.NoContent();
-            }
-            else
-            {
-                return this.NotFound();
-            }
+            await this.bloggingService.UpdateBlogCommentAsync(blogArticleId, blogCommentId, blogComment);
+            return this.NoContent();
         }
     }
 }

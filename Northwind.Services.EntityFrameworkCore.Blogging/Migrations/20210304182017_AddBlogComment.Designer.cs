@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Northwind.Services.EntityFrameworkCore.Blogging.Context;
 
 namespace Northwind.Services.EntityFrameworkCore.Blogging.Migrations
 {
     [DbContext(typeof(BloggingContext))]
-    partial class BloggingContextModelSnapshot : ModelSnapshot
+    [Migration("20210304182017_AddBlogComment")]
+    partial class AddBlogComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -76,10 +78,6 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging.Migrations
                         .HasColumnType("int")
                         .HasColumnName("blog_comment_id")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ArticleId")
-                        .HasColumnType("int")
-                        .HasColumnName("article_id");
 
                     b.Property<int>("CustomerId")
                         .HasColumnType("int")
