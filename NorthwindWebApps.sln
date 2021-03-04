@@ -18,7 +18,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.DataAccess", "Nor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.Services.DataAccess", "Northwind.Services.DataAccess\Northwind.Services.DataAccess.csproj", "{018619A0-03AA-4E8D-A73B-8D4836ACB473}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.DataAccess.SqlServer", "Northwind.DataAccess.SqlServer\Northwind.DataAccess.SqlServer.csproj", "{760D0650-9BFF-4F4B-94B3-B183A248019C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Northwind.DataAccess.SqlServer", "Northwind.DataAccess.SqlServer\Northwind.DataAccess.SqlServer.csproj", "{760D0650-9BFF-4F4B-94B3-B183A248019C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Northwind.Services.EntityFrameworkCore.Blogging", "Northwind.Services.EntityFrameworkCore.Blogging\Northwind.Services.EntityFrameworkCore.Blogging.csproj", "{930826B4-3802-455E-9F2E-E0533C098367}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +104,18 @@ Global
 		{760D0650-9BFF-4F4B-94B3-B183A248019C}.Release|x64.Build.0 = Release|Any CPU
 		{760D0650-9BFF-4F4B-94B3-B183A248019C}.Release|x86.ActiveCfg = Release|Any CPU
 		{760D0650-9BFF-4F4B-94B3-B183A248019C}.Release|x86.Build.0 = Release|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Debug|x64.Build.0 = Debug|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Debug|x86.Build.0 = Debug|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Release|Any CPU.Build.0 = Release|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Release|x64.ActiveCfg = Release|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Release|x64.Build.0 = Release|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Release|x86.ActiveCfg = Release|Any CPU
+		{930826B4-3802-455E-9F2E-E0533C098367}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

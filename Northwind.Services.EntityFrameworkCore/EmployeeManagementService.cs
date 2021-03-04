@@ -100,6 +100,7 @@ namespace Northwind.Services.EntityFrameworkCore
                 newEmployee.ReportsTo = employee.ReportsTo;
                 newEmployee.PhotoPath = employee.PhotoPath;
                 newEmployee.Salary = employee.Salary;
+                await this.context.SaveChangesAsync();
                 return true;
             }
             else
