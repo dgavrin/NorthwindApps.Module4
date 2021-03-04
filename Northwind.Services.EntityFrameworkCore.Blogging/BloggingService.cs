@@ -36,6 +36,27 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
         }
 
         /// <inheritdoc/>
+        public async Task<int> CreateBlogCommentAsync(BlogComment blogComment)
+        {
+            if (blogComment is null)
+            {
+                throw new ArgumentNullException(nameof(blogComment));
+            }
+
+            if (this.context.Articles.Any(a => a.BlogArticleId == blogComment.ArticleId))
+            {
+                blogComment.BlogCommentId = 0;
+                await this.context.Comments.AddAsync(blogComment);
+                await this.context.SaveChangesAsync();
+                return blogComment.BlogCommentId;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<int> CreateLinkToProductForArticleAsync(int blogArticleId, int productId)
         {
             if (blogArticleId <= 0)
@@ -80,6 +101,22 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
         }
 
         /// <inheritdoc/>
+        public async Task<bool> DestroyBlogCommentAsync(int blogCommentId)
+        {
+            var blogComment = await this.context.Comments.FindAsync(blogCommentId);
+            if (blogComment is not null)
+            {
+                this.context.Comments.Remove(blogComment);
+                this.context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> DestroyLinkToProductForArticle(int blogArticleProductId)
         {
             var blogArticleProduct = await this.context.ArticleProduct.FindAsync(blogArticleProductId);
@@ -93,6 +130,19 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
             {
                 return false;
             }
+        }
+
+        /// <inheritdoc/>
+        public async Task<IList<BlogComment>> GetCommentsForArticleAsync(int blogArticleId)
+        {
+            if (blogArticleId <= 0)
+            {
+                throw new ArgumentNullException(nameof(blogArticleId));
+            }
+
+            return this.context.Comments
+                               .Where(c => c.ArticleId == blogArticleId)
+                               .ToList();
         }
 
         /// <inheritdoc/>
@@ -138,6 +188,27 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging
                 article.Title = blogArticle.Title;
                 article.Body = blogArticle.Body;
                 article.PublicationDate = blogArticle.PublicationDate;
+                await this.context.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateBlogCommentAsync(int blogArticleId, int blogCommentId, BlogComment blogComment)
+        {
+            if (blogComment is null)
+            {
+                throw new ArgumentNullException(nameof(blogComment));
+            }
+
+            var comment = this.context.Comments.Single(c => c.ArticleId == blogArticleId && c.BlogCommentId == blogCommentId);
+            if (comment is not null)
+            {
+                comment.Text = blogComment.Text;
                 await this.context.SaveChangesAsync();
                 return true;
             }

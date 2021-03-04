@@ -65,6 +65,9 @@ namespace Northwind.Services.EntityFrameworkCore.Blogging.Context
                     c.Property(p => p.BlogCommentId)
                         .HasColumnType("int")
                         .HasColumnName("blog_comment_id");
+                    c.Property(p => p.ArticleId)
+                        .HasColumnType("int")
+                        .HasColumnName("article_id");
                     c.Property(p => p.Text)
                         .HasColumnType("nvarchar(500)")
                         .HasColumnName("text");
